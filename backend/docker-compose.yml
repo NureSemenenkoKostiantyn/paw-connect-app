@@ -13,7 +13,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
 
   db:
-    image: postgres:15
+    image: postgis/postgis:17-3.5
     container_name: postgres-db
     environment:
       POSTGRES_DB: pawconnect
