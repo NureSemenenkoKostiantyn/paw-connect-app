@@ -1,7 +1,7 @@
 package com.pawconnect.backend.dog.dto;
 
 import com.pawconnect.backend.dog.model.ActivityLevel;
-import com.pawconnect.backend.dog.model.Gender;
+import com.pawconnect.backend.dog.model.DogGender;
 import com.pawconnect.backend.dog.model.Personality;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +24,7 @@ public class DogCreateRequest {
     private String size;
 
     @NotNull
-    private Gender gender;
+    private DogGender gender;
 
     @NotNull
     private Personality personality;

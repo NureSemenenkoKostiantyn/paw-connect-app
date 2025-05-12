@@ -1,5 +1,5 @@
 package com.pawconnect.backend.dog.model;
 
-public enum Gender {
+public enum DogGender {
     MALE, FEMALE
 }

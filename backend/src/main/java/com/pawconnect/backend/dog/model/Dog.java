@@ -35,7 +35,7 @@ public class Dog {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Gender gender;
+    private DogGender gender;
 
     @Enumerated(EnumType.STRING)
     @NotNull

@@ -40,10 +40,20 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_languages",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private Set<Language> languages = new HashSet<>();
+
     private String bio;
-    private String language;
+
     private LocalDate birthdate;
-    private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private UserGender gender;
 
     @Column(columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point location;

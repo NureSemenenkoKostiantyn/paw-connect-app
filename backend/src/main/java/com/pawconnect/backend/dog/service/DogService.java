@@ -29,7 +29,7 @@ public class DogService {
     }
 
     public DogResponse createDog(DogCreateRequest request) {
-        User currentUser = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUserEntity();
 
         Dog dog = dogMapper.toEntity(request);
         dog.setOwner(currentUser);
