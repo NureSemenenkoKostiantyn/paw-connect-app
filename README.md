@@ -66,5 +66,5 @@
 ## 🛠️ Project Status
 
 - 🔧 Active Development *(MVP phase)*
-- 🧪 Modules in progress: auth, swipe, chat
+- 🧪 Modules in progress: swipe, chat, events
 - 🎯 Main focus: mobile app + RESTful backend
