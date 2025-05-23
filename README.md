@@ -26,7 +26,7 @@
 - 💬 **Real-Time Chat** (WebSocket)
 - 📅 **Meetups**: Create, accept, decline invitations
 - 📌 **Place Finder**: Clinics, parks, pet services
-- 💳 **Stripe Integration** for premium features
+- 💳 **Stripe Integration** for subscription
 
 ---
 
