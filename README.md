@@ -1,76 +1,70 @@
-# 🐾 PawConnect — соціальна платформа для власників собак
+# 🐾 PawConnect — Social Platform for Dog Owners
 
-**PawConnect** — це мобільно-орієнтована програмна система, що об'єднує власників собак для:
-- **знайомств** через swipe-механіку (аналог Tinder/Bumble),
-- **організації зустрічей та прогулянок**,
-- **спілкування в реальному часі**,
-- **пошуку зоосервісів поруч** (парки, грумінг, клініки),
-- **створення ком'юніті** власників собак.
+**PawConnect** is a mobile-first software platform designed to connect dog owners for:
 
----
-
-## 📱 Платформи
-
-- **Мобільний застосунок** — Flutter (основна платформа)
-- **Веб-версія** *(опціонально)* — Angular або React
+- Making new connections through swipe-based matchmaking (Tinder/Bumble-style)
+- Organizing meetups and walks
+- Real-time chatting
+- Discovering nearby dog-friendly services (parks, groomers, clinics)
+- Building a community of dog owners
 
 ---
 
-## 🧩 Основні функції
+## 📱 Platforms
 
-- 🔐 Реєстрація, авторизація (JWT / OAuth2)
-- 🐕 Профілі власників і собак
-- ❤️ Swipe + Match механіка (пошук по сумісності)
-- 📍 Геолокаційний пошук та мапа з активними користувачами
-- 💬 Чат (WebSocket)
-- 📅 Зустрічі: створення, прийом, відхилення
-- 📌 Пошук місць (клініки, парки, сервіси)
-- 💳 Stripe інтеграція для платних функцій
+- **Mobile App** — Built with Flutter (main platform)
+- **Web App** *(optional)* — Angular or React
 
 ---
 
-## ⚙️ Технології
+## 🧩 Core Features
+
+- 🔐 **Authentication & Authorization** (JWT / OAuth2)
+- 🐕 **User & Dog Profiles**
+- ❤️ **Swipe + Match** mechanics (compatibility-based matching)
+- 📍 **Geolocation Search** with interactive user map
+- 💬 **Real-Time Chat** (WebSocket)
+- 📅 **Meetups**: Create, accept, decline invitations
+- 📌 **Place Finder**: Clinics, parks, pet services
+- 💳 **Stripe Integration** for subscription
+
+---
+
+## ⚙️ Tech Stack
 
 ### 🔙 Backend
-- Java 17 + Spring Boot
-- PostgreSQL (або MongoDB при гібридному підході)
-- Redis (сесії, кеш)
-- WebSocket (чат)
-- REST API + Swagger/OpenAPI
-- Docker + Kubernetes (Azure AKS)
+
+- Java 21 + Spring Boot  
+- PostgreSQL
+- Redis *(session & cache management)*  
+- WebSocket *(real-time chat)*  
+- REST API + Swagger/OpenAPI  
+- Docker + Kubernetes (Azure AKS)  
 - CI/CD: GitHub Actions
 
 ### 📱 Mobile App
-- Flutter 3.x
-- Dio (HTTP)
-- flutter_bloc / provider
-- go_router
+
+- Flutter 3.x  
+- Dio (HTTP requests)  
+- flutter_bloc / provider (state management)  
+- go_router (navigation)  
 - Geolocator + Google Maps
 
 ---
 
-## 🗂️ Структура репозиторію
+## 🗂️ Repository Structure
 
 ```
-/backend         # Бекенд (Spring Boot)
-/mobile-app      # Flutter-застосунок
-/web             # (опціонально) фронтенд
-/docs            # документація, діаграми, API
+/backend         # Spring Boot backend
+/mobile-app      # Flutter mobile app
+/web             # Optional frontend (Angular/React)
+/docs            # Docs, diagrams, API specs
 ```
 
 ---
 
-## 🛠️ Статус
+## 🛠️ Project Status
 
-- 🔧 Активна розробка (фаза MVP)
-- 🧪 Пишуться модулі для авторизації, swipe, чату
-- 🎯 Основний фокус: мобільний застосунок + REST API
-
----
-
-## 📝 Цілі проекту
-
-- ✅ Створити продакшн-орієнтовану систему
-- ✅ Показати високий рівень архітектури та розробки
-- ✅ Придатність до розширення та масштабування
-- ✅ Вивести проект у портфоліо після захисту
+- 🔧 Active Development *(MVP phase)*
+- 🧪 Modules in progress: swipe, chat, events
+- 🎯 Main focus: mobile app + RESTful backend
