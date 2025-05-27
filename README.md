@@ -1,4 +1,4 @@
-# 🐾 PawConnect — Social Platform for Dog Owners
+# 🐾 PawConnect — Social Platform for Dog Owners 
 
 **PawConnect** is a mobile-first software platform designed to connect dog owners for:
 
