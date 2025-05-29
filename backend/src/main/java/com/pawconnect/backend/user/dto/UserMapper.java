@@ -2,6 +2,7 @@ package com.pawconnect.backend.user.dto;
 
 import com.pawconnect.backend.dog.dto.DogMapper;
 import com.pawconnect.backend.dog.dto.DogResponse;
+import com.pawconnect.backend.match.dto.CandidateUserResponse;
 import com.pawconnect.backend.user.model.Language;
 import com.pawconnect.backend.user.model.User;
 import org.mapstruct.*;
@@ -41,6 +42,11 @@ public abstract class UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "profilePhotoUrl", ignore = true)
     public abstract void updateUserProfileFromDto(UserUpdateProfileRequest request, @MappingTarget User user);
+
+    @Mapping(target = "distanceKm", source = "distanceKm")
+    @Mapping(target = "languages", expression = "java(mapLanguages(user))")
+    @Mapping(target = "dogs", expression = "java(mapDogs(user))")
+    public abstract CandidateUserResponse toCandidateUserResponse(User user, Double distanceKm);
 
     protected Point toPoint(Double longitude, Double latitude) {
         if (latitude != null && longitude != null) {

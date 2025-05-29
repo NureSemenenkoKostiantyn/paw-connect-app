@@ -13,22 +13,38 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+
     Optional<User> findByUsername(String username);
 
     boolean existsByEmail(String email);
+
     boolean existsById(@NonNull Long id);
+
     Boolean existsByUsername(String username);
 
-    @Query("""
-    SELECT u FROM User u
-    WHERE u.id != :currentUserId
-      AND u.id NOT IN (
-         SELECT s.target.id FROM Swipe s WHERE s.liker.id = :currentUserId
-      )
-      AND (:lat IS NULL OR ST_DistanceSphere(POINT(u.longitude, u.latitude), POINT(:lon, :lat)) <= :radiusMeters)
-    """)
-    List<User> findCandidates(@Param("currentUserId") Long currentUserId,
-                              @Param("lat") Double lat,
-                              @Param("lon") Double lon,
-                              @Param("radiusMeters") Double radiusMeters);
+//    @Query(value = """
+//    SELECT
+//        u.id AS id,
+//        u.username AS username,
+//        u.bio AS bio,
+//        u.profile_photo_url AS profilePhotoUrl,
+//        u.gender AS gender,
+//        ST_DistanceSphere(u.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)) / 1000 AS distanceKm
+//    FROM users u
+//    WHERE u.id != :currentUserId
+//      AND NOT EXISTS (
+//          SELECT 1 FROM swipes s
+//          WHERE s.liker_id = :currentUserId AND s.target_id = u.id
+//      )
+//      AND ST_DWithin(u.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :radiusMeters)
+//    ORDER BY distanceKm ASC
+//    LIMIT :limit
+//    """, nativeQuery = true)
+//    List<CandidateUserProjection> findCandidatesByLocation(
+//            @Param("currentUserId") Long currentUserId,
+//            @Param("lat") double lat,
+//            @Param("lon") double lon,
+//            @Param("radiusMeters") double radiusMeters,
+//            @Param("limit") int limit
+//    );
 }
