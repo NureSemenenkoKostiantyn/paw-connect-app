@@ -1,9 +1,13 @@
 package com.pawconnect.backend.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pawconnect.backend.dog.model.Dog;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.geo.Point;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Point;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,6 +59,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserGender gender;
 
+
+    @JdbcTypeCode(SqlTypes.GEOMETRY)
     @Column(columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point location;
 

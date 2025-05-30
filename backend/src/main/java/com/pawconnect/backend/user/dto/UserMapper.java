@@ -5,9 +5,12 @@ import com.pawconnect.backend.dog.dto.DogResponse;
 import com.pawconnect.backend.match.dto.CandidateUserResponse;
 import com.pawconnect.backend.user.model.Language;
 import com.pawconnect.backend.user.model.User;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +21,9 @@ public abstract class UserMapper {
 
     @Autowired
     protected DogMapper dogMapper;
+
+    private static final GeometryFactory geometryFactory =
+            new GeometryFactory(new PrecisionModel(), 4326); // SRID 4326 for GPS coords
 
     @Mapping(target = "latitude", source = "location", qualifiedByName = "pointToLatitude")
     @Mapping(target = "longitude", source = "location", qualifiedByName = "pointToLongitude")
@@ -50,7 +56,7 @@ public abstract class UserMapper {
 
     protected Point toPoint(Double longitude, Double latitude) {
         if (latitude != null && longitude != null) {
-            return new Point(longitude, latitude);
+            return geometryFactory.createPoint(new Coordinate(longitude, latitude));
         }
         return null;
     }
