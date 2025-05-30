@@ -1,6 +1,5 @@
 package com.pawconnect.backend.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pawconnect.backend.dog.model.Dog;
 import jakarta.persistence.*;
 import lombok.*;
