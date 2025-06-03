@@ -1,4 +1,4 @@
-package com.pawconnect.backend.auth.contoller;
+package com.pawconnect.backend.auth.controller;
 
 import java.util.HashSet;
 import java.util.List;
