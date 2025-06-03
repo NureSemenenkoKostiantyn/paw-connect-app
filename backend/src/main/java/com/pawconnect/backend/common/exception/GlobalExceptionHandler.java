@@ -188,4 +188,36 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(error);
     }
+
+    /** 400 for bad arguments (e.g. malformed ID, invalid enum value, etc.) */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest req) {
+
+        log.info("Illegal argument on [{} {}]: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+
+        ApiError error = new ApiError(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                ex.getMessage(),
+                req.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /** 400 for illegal application state for the current request (e.g. calling an operation twice) */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiError> handleIllegalState(IllegalStateException ex, HttpServletRequest req) {
+
+        log.info("Illegal state on [{} {}]: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+
+        ApiError error = new ApiError(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                ex.getMessage(),
+                req.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }
