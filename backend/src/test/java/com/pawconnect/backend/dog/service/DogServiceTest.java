@@ -55,7 +55,7 @@ class DogServiceTest {
         createRequest.setName("Buddy");
         createRequest.setBreed("Labrador");
         createRequest.setBirthdate(LocalDate.of(2020, 1, 1));
-        createRequest.setSize("Medium");
+        createRequest.setSize(DogSize.MEDIUM);
         createRequest.setGender(DogGender.MALE);
         createRequest.setPersonality(Personality.PLAYFUL);
         createRequest.setActivityLevel(ActivityLevel.HIGH);
@@ -65,7 +65,7 @@ class DogServiceTest {
         updateRequest.setName("Buddy Updated");
         updateRequest.setBreed("Golden Retriever");
         updateRequest.setBirthdate(LocalDate.of(2020, 1, 1));
-        updateRequest.setSize("Large");
+        updateRequest.setSize(DogSize.LARGE);
         updateRequest.setGender(DogGender.MALE);
         updateRequest.setPersonality(Personality.FRIENDLY);
         updateRequest.setActivityLevel(ActivityLevel.MEDIUM);

@@ -2,6 +2,7 @@ package com.pawconnect.backend.dog.dto;
 
 import com.pawconnect.backend.dog.model.ActivityLevel;
 import com.pawconnect.backend.dog.model.DogGender;
+import com.pawconnect.backend.dog.model.DogSize;
 import com.pawconnect.backend.dog.model.Personality;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,8 +22,7 @@ public class DogUpdateRequest {
     @NotNull
     private LocalDate birthdate;
 
-    @NotBlank
-    private String size;
+    private DogSize size;
 
     @NotNull
     private DogGender gender;
