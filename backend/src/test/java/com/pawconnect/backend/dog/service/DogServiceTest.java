@@ -44,7 +44,7 @@ class DogServiceTest {
                 .name("Buddy")
                 .breed("Labrador")
                 .birthdate(LocalDate.of(2020, 1, 1))
-                .size("Medium")
+                .size(DogSize.MEDIUM)
                 .gender(DogGender.MALE)
                 .personality(Personality.PLAYFUL)
                 .activityLevel(ActivityLevel.HIGH)

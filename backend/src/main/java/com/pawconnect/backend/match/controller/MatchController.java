@@ -1,33 +1,36 @@
 package com.pawconnect.backend.match.controller;
 
-import com.pawconnect.backend.common.util.SecurityUtils;
 import com.pawconnect.backend.match.dto.CandidateUserResponse;
+import com.pawconnect.backend.match.dto.SwipeCreateRequest;
 import com.pawconnect.backend.match.service.MatchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/matches")
+@RequiredArgsConstructor
+@Validated
 public class MatchController {
 
     private final MatchService matchService;
 
-    @Autowired
-    public MatchController(MatchService matchService) {
-        this.matchService = matchService;
+    @GetMapping("/candidates")
+    public List<CandidateUserResponse> candidates(
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
+            @RequestParam(defaultValue = "25") @Min(1)           double radiusKm) {
+        return matchService.getCandidates(limit, radiusKm);
     }
 
-//    @GetMapping("/candidates")
-//    public List<CandidateUserResponse> getSwipeCandidates(@RequestParam Optional<Double> lat,
-//                                                          @RequestParam Optional<Double> lon,
-//                                                          @RequestParam Optional<Double> radiusKm) {
-//        return matchService.getCandidatesForUser(lat, lon, radiusKm);
-//    }
+    @PostMapping("/swipes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void swipe(@RequestBody @Valid SwipeCreateRequest request) {
+        matchService.swipe(request);
+    }
 }

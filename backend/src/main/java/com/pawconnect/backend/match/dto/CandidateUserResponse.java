@@ -23,4 +23,5 @@ public class CandidateUserResponse {
     private Double distanceKm;
     private Set<String> languages;
     private List<DogResponse> dogs;
+    private Integer score;
 }
