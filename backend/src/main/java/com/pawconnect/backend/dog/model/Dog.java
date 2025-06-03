@@ -30,8 +30,9 @@ public class Dog {
     @NotNull
     private LocalDate birthdate;
 
+    @Enumerated(EnumType.STRING)
     @NotBlank
-    private String size;
+    private DogSize size;
 
     @Enumerated(EnumType.STRING)
     @NotNull

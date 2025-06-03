@@ -31,6 +31,6 @@ public class Swipe {
     @Enumerated(EnumType.STRING)
     private SwipeDecision decision; // LIKE, PASS
 
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
