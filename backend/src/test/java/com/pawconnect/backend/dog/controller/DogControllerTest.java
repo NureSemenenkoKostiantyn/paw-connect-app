@@ -45,7 +45,7 @@ class DogControllerTest {
         createRequest.setName("Rex");
         createRequest.setBreed("Beagle");
         createRequest.setBirthdate(LocalDate.of(2021, 5, 10));
-        createRequest.setSize("Small");
+        createRequest.setSize(DogSize.SMALL);
         createRequest.setGender(DogGender.MALE);
         createRequest.setPersonality(Personality.FRIENDLY);
         createRequest.setActivityLevel(ActivityLevel.MEDIUM);
@@ -55,7 +55,7 @@ class DogControllerTest {
         updateRequest.setName("Max");
         updateRequest.setBreed("Terrier");
         updateRequest.setBirthdate(LocalDate.of(2020, 3, 15));
-        updateRequest.setSize("Medium");
+        updateRequest.setSize(DogSize.MEDIUM);
         updateRequest.setGender(DogGender.MALE);
         updateRequest.setPersonality(Personality.PLAYFUL);
         updateRequest.setActivityLevel(ActivityLevel.HIGH);
