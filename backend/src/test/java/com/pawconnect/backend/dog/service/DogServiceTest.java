@@ -135,6 +135,13 @@ class DogServiceTest {
     }
 
     @Test
+    void updateDog_shouldThrowNotFoundIfDogMissing() {
+        when(dogRepository.findById(100L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> dogService.updateDog(100L, updateRequest));
+    }
+
+    @Test
     void deleteDog_shouldDeleteIfOwner() {
         when(dogRepository.findById(100L)).thenReturn(Optional.of(dog));
 
@@ -157,5 +164,12 @@ class DogServiceTest {
 
             assertThrows(UnauthorizedAccessException.class, () -> dogService.deleteDog(100L));
         }
+    }
+
+    @Test
+    void deleteDog_shouldThrowNotFoundIfDogMissing() {
+        when(dogRepository.findById(100L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> dogService.deleteDog(100L));
     }
 }
