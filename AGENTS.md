@@ -1,7 +1,7 @@
 # AGENTS.md  ── repo root
 ## Environment
 shell: |
-# 1  Start the built-in Postgres cluster
+# 1  Start the built-in Postgres cluster on every task
 service postgresql start
 
 # 2  (idempotent) ensure DB + PostGIS exist
