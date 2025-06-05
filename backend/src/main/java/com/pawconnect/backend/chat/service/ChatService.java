@@ -102,4 +102,9 @@ public class ChatService {
                 .map(chatMapper::toDto)
                 .toList();
     }
+
+    public Chat getChatByEventId(Long eventId) {
+        return chatRepository.findByEventId(eventId)
+                .orElseThrow(() -> new NotFoundException("Chat not found"));
+    }
 }
