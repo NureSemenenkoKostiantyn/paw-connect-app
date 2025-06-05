@@ -11,6 +11,7 @@ import com.pawconnect.backend.common.exception.UnauthorizedAccessException;
 import com.pawconnect.backend.common.enums.ChatType;
 import com.pawconnect.backend.user.model.User;
 import com.pawconnect.backend.user.repository.UserRepository;
+import com.pawconnect.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final ChatMapper chatMapper;
+    private final UserService userService;
 
     public ChatResponse createChat(ChatCreateRequest request) {
         Chat chat = chatMapper.toEntity(request);
@@ -59,5 +61,17 @@ public class ChatService {
             throw new UnauthorizedAccessException("You are not a participant of this chat");
         }
         return getChatEntity(chatId);
+    }
+
+    public List<ChatResponse> getCurrentUserChats() {
+        Long userId = userService.getCurrentUserEntity().getId();
+        return getChatsByUserId(userId);
+    }
+
+    public List<ChatResponse> getChatsByUserId(Long userId) {
+        return chatRepository.findByParticipantsUserId(userId)
+                .stream()
+                .map(chatMapper::toDto)
+                .toList();
     }
 }

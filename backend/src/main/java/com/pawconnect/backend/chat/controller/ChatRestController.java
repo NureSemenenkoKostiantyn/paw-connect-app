@@ -1,7 +1,9 @@
 package com.pawconnect.backend.chat.controller;
 
 import com.pawconnect.backend.chat.dto.ChatMessageResponse;
+import com.pawconnect.backend.chat.dto.ChatResponse;
 import com.pawconnect.backend.chat.service.MessageService;
+import com.pawconnect.backend.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,12 @@ import java.util.List;
 public class ChatRestController {
 
     private final MessageService messageService;
+    private final ChatService chatService;
+
+    @GetMapping
+    public ResponseEntity<List<ChatResponse>> getCurrentUserChats() {
+        return ResponseEntity.ok(chatService.getCurrentUserChats());
+    }
 
     @GetMapping("/{chatId}/messages")
     public ResponseEntity<List<ChatMessageResponse>> getMessages(
