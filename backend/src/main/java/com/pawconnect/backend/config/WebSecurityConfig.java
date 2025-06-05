@@ -67,6 +67,7 @@ public class WebSecurityConfig  {
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/**").permitAll()
+                                .requestMatchers("/ws-chat/**", "/ws-chat").authenticated()
                                 .anyRequest().authenticated()
                 );
 

@@ -8,6 +8,7 @@ import com.pawconnect.backend.match.model.Match;
 import com.pawconnect.backend.match.model.Swipe;
 import com.pawconnect.backend.match.repository.MatchRepository;
 import com.pawconnect.backend.match.repository.SwipeRepository;
+import com.pawconnect.backend.chat.service.ChatService;
 import com.pawconnect.backend.user.dto.PublicUserResponse;
 import com.pawconnect.backend.user.dto.UserMapper;
 import com.pawconnect.backend.user.model.User;
@@ -42,6 +43,8 @@ class MatchServiceTest {
     private UserService userService;
     @Mock
     private UserMapper userMapper;
+    @Mock
+    private ChatService chatService;
 
     @InjectMocks
     private MatchService matchService;
@@ -123,6 +126,7 @@ class MatchServiceTest {
         matchService.swipe(req);
 
         verify(matchRepository).save(any(Match.class));
+        verify(chatService).createPrivateChat(currentUser, targetUser);
     }
 
     @Test
