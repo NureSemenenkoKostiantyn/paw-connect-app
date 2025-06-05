@@ -68,3 +68,15 @@
 - 🔧 Active Development *(MVP phase)*
 - 🧪 Modules in progress: swipe, chat, events
 - 🎯 Main focus: mobile app + RESTful backend
+
+## WebSocket API
+
+The backend exposes a STOMP endpoint at `/ws-chat`. The handshake requires a valid JWT,
+so include the token in the `Authorization` header (or cookie) when connecting
+with a WebSocket or SockJS client.
+
+### Endpoints
+
+- Chats are automatically created when two users match.
+- `/app/chat.send` – send a message to a chat; messages appear on `/topic/chats/{chatId}`.
+- `GET /api/chats/{chatId}/messages` – retrieve chat history paged by `page` and `limit`.

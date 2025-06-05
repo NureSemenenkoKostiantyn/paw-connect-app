@@ -5,6 +5,7 @@ import com.pawconnect.backend.common.enums.SwipeDecision;
 import com.pawconnect.backend.match.dto.CandidateUserResponse;
 import com.pawconnect.backend.match.dto.RankedCandidateRow;
 import com.pawconnect.backend.match.dto.SwipeCreateRequest;
+import com.pawconnect.backend.chat.service.ChatService;
 import com.pawconnect.backend.match.model.Match;
 import com.pawconnect.backend.match.model.Swipe;
 import com.pawconnect.backend.match.repository.MatchRepository;
@@ -34,6 +35,7 @@ public class MatchService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final ChatService chatService;
 
     public List<CandidateUserResponse> getCandidates(int limit, double radiusKm) {
         User currentUser = userService.getCurrentUserEntity();
@@ -97,6 +99,7 @@ public class MatchService {
                     .user2(u2)
                     .createdAt(LocalDateTime.now())
                     .build());
+            chatService.createPrivateChat(u1, u2);
         }
     }
 
