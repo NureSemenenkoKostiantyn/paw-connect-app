@@ -6,6 +6,7 @@ import com.pawconnect.backend.chat.dto.ChatResponse;
 import com.pawconnect.backend.chat.model.Chat;
 import com.pawconnect.backend.chat.model.ChatParticipant;
 import com.pawconnect.backend.chat.repository.ChatRepository;
+import com.pawconnect.backend.chat.repository.ChatParticipantRepository;
 import com.pawconnect.backend.common.exception.NotFoundException;
 import com.pawconnect.backend.common.exception.UnauthorizedAccessException;
 import com.pawconnect.backend.common.enums.ChatType;
@@ -26,6 +27,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ChatMapper chatMapper;
     private final UserService userService;
+    private final ChatParticipantRepository chatParticipantRepository;
 
     public ChatResponse createChat(ChatCreateRequest request) {
         Chat chat = chatMapper.toEntity(request);
@@ -48,6 +50,32 @@ public class ChatService {
                 .build();
         chat.getParticipants().add(ChatParticipant.builder().chat(chat).user(u1).build());
         chat.getParticipants().add(ChatParticipant.builder().chat(chat).user(u2).build());
+        return chatRepository.save(chat);
+    }
+
+    public void addParticipant(Chat chat, User user) {
+        if (!chatParticipantRepository.existsByChatIdAndUserId(chat.getId(), user.getId())) {
+            chatParticipantRepository.save(ChatParticipant.builder()
+                    .chat(chat)
+                    .user(user)
+                    .build());
+        }
+    }
+
+    public void removeParticipant(Chat chat, User user) {
+        chatParticipantRepository.deleteByChatIdAndUserId(chat.getId(), user.getId());
+    }
+
+    public Chat createGroupChatForEvent(com.pawconnect.backend.event.model.Event event) {
+        Chat chat = Chat.builder()
+                .type(ChatType.GROUP)
+                .event(event)
+                .participants(new ArrayList<>())
+                .build();
+        chat.getParticipants().add(ChatParticipant.builder()
+                .chat(chat)
+                .user(event.getHost())
+                .build());
         return chatRepository.save(chat);
     }
 
