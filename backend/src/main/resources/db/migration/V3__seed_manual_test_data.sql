@@ -229,32 +229,46 @@ INSERT INTO services (id, name, type, latitude, longitude, rating) VALUES
 INSERT INTO chats (id, type, event_id) VALUES
                                            (2, 'PRIVATE', NULL),
                                            (3, 'PRIVATE', NULL),
-                                           (4, 'GROUP',   NULL);
+                                           (4, 'GROUP',   NULL),
+                                           (5, 'PRIVATE', NULL),
+                                           (6, 'PRIVATE', NULL);
 
 INSERT INTO chat_participants (chat_id, user_id) VALUES
                                                      (2, 3), (2, 4),
                                                      (3, 5), (3, 6),
-                                                     (4, 7), (4, 8), (4, 9);
+                                                     (4, 7), (4, 8), (4, 9),
+                                                     (5, 7), (5, 8),
+                                                     (6, 9), (6, 10);
 
 INSERT INTO messages (id, content, timestamp, chat_id, sender_id) VALUES
                                                                       (3, 'Hola Diana!',                    TIMESTAMP '2025-05-28 11:00:00', 2, 3),
                                                                       (4, 'Hey Charlie, ¿qué tal?',        TIMESTAMP '2025-05-28 11:01:00', 2, 4),
                                                                       (5, 'Let’s plan a play date',        TIMESTAMP '2025-05-28 11:05:00', 3, 5),
                                                                       (6, 'Sounds good — park at 6pm?',    TIMESTAMP '2025-05-28 11:06:00', 3, 6),
-                                                                      (7, 'Anyone up for a hike Sunday?',  TIMESTAMP '2025-05-28 11:10:00', 4, 7);
+                                                                      (7, 'Anyone up for a hike Sunday?',  TIMESTAMP '2025-05-28 11:10:00', 4, 7),
+                                                                      (8, 'Hey Hana, want to walk our dogs this weekend?', TIMESTAMP '2025-05-28 11:32:00', 5, 7),
+                                                                      (9, 'Sure George, let''s meet at the park.',         TIMESTAMP '2025-05-28 11:33:00', 5, 8),
+                                                                      (10, 'Hi Julia, join the dog run tomorrow?',         TIMESTAMP '2025-05-28 11:42:00', 6, 9),
+                                                                      (11, 'Sounds great Igor, see you then!',             TIMESTAMP '2025-05-28 11:43:00', 6, 10);
 
 -- ---------------------------------------------------------------------------
 -- 8. Matches & Swipes
 -- ---------------------------------------------------------------------------
 INSERT INTO matches (id, user1_id, user2_id, created_at) VALUES
                                                              (2, 3, 4, TIMESTAMP '2025-05-28 11:15:00'),
-                                                             (3, 5, 6, TIMESTAMP '2025-05-28 11:20:00');
+                                                             (3, 5, 6, TIMESTAMP '2025-05-28 11:20:00'),
+                                                             (4, 7, 8, TIMESTAMP '2025-05-28 11:30:00'),
+                                                             (5, 9, 10, TIMESTAMP '2025-05-28 11:40:00');
 
 INSERT INTO swipes (id, liker_id, target_id, decision, created_at) VALUES
                                                                        (2, 3, 4, 'LIKE', TIMESTAMP '2025-05-28 11:14:00'),
                                                                        (3, 4, 3, 'LIKE', TIMESTAMP '2025-05-28 11:14:30'),
                                                                        (4, 5, 6, 'LIKE', TIMESTAMP '2025-05-28 11:19:00'),
-                                                                       (5, 6, 5, 'LIKE', TIMESTAMP '2025-05-28 11:19:20');
+                                                                       (5, 6, 5, 'LIKE', TIMESTAMP '2025-05-28 11:19:20'),
+                                                                       (6, 7, 8, 'LIKE', TIMESTAMP '2025-05-28 11:29:00'),
+                                                                       (7, 8, 7, 'LIKE', TIMESTAMP '2025-05-28 11:29:30'),
+                                                                       (8, 9, 10, 'LIKE', TIMESTAMP '2025-05-28 11:39:00'),
+                                                                       (9, 10, 9, 'LIKE', TIMESTAMP '2025-05-28 11:39:20');
 
 -- ---------------------------------------------------------------------------
 -- 9. Payments  (Premium & test payments)
