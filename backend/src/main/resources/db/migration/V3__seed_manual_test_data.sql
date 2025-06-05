@@ -56,7 +56,24 @@ INSERT INTO services (id, name, type, latitude, longitude, rating) VALUES
                                                                        (2, 'Happy Paws Vet', 'VET', 40.712776, -74.005974, 4.5);
 
 ---------------------------------------------------------------------------
--- 6. Chat / messages
+-- 6. Events
+---------------------------------------------------------------------------
+INSERT INTO events (
+    id, title, description, event_date_time, location, host_id
+) VALUES
+      (1, 'Morning Dog Walk', 'Meet for a casual walk',
+       TIMESTAMP '2025-05-29 09:00:00',
+       ST_GeogFromText('SRID=4326;POINT(-0.1257 51.5085)'), 1),
+      (2, 'Evening Park Meetup', 'Playtime in the park',
+       TIMESTAMP '2025-05-30 18:00:00',
+       ST_GeogFromText('SRID=4326;POINT(-0.1350 51.5099)'), 2);
+
+INSERT INTO event_participants (event_id, user_id, status) VALUES
+    (1, 1, 'GOING'),
+    (2, 2, 'GOING');
+
+---------------------------------------------------------------------------
+-- 7. Chat / messages
 ---------------------------------------------------------------------------
 INSERT INTO chats (id, type, event_id) VALUES (1, 'PRIVATE', NULL);
 
@@ -68,7 +85,7 @@ INSERT INTO messages (id, content, timestamp, chat_id, sender_id) VALUES
                                                                       (2, 'I''m good, thanks Alice!',      TIMESTAMP '2025-05-28 09:12:00', 1, 2);
 
 ---------------------------------------------------------------------------
--- 7. Matches / swipes
+-- 8. Matches / swipes
 ---------------------------------------------------------------------------
 INSERT INTO matches (id, user1_id, user2_id, created_at) VALUES
     (1, 1, 2, TIMESTAMP '2025-05-28 09:15:00');
@@ -77,7 +94,7 @@ INSERT INTO swipes (id, liker_id, target_id, decision, created_at) VALUES
     (1, 1, 2, 'LIKE', TIMESTAMP '2025-05-28 09:20:00');
 
 ---------------------------------------------------------------------------
--- 8. Payments
+-- 9. Payments
 ---------------------------------------------------------------------------
 INSERT INTO payments (
     id, amount, currency, status, timestamp, user_id
@@ -86,12 +103,13 @@ INSERT INTO payments (
       (2, 19.99, 'USD', 'REFUNDED', TIMESTAMP '2025-05-28 09:30:00', 2);
 
 ---------------------------------------------------------------------------
--- 9. Sequence alignment
+-- 10. Sequence alignment
 ---------------------------------------------------------------------------
 SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
 SELECT setval('dogs_id_seq',      (SELECT MAX(id) FROM dogs));
 SELECT setval('services_id_seq',  (SELECT MAX(id) FROM services));
 SELECT setval('chats_id_seq',     (SELECT MAX(id) FROM chats));
+SELECT setval('events_id_seq',     (SELECT MAX(id) FROM events));
 SELECT setval('messages_id_seq',  (SELECT MAX(id) FROM messages));
 SELECT setval('matches_id_seq',   (SELECT MAX(id) FROM matches));
 SELECT setval('swipes_id_seq',    (SELECT MAX(id) FROM swipes));
@@ -223,9 +241,32 @@ INSERT INTO services (id, name, type, latitude, longitude, rating) VALUES
                                                                        (3, 'Doggo Groom Salon', 'GROOMER', 51.5155, -0.1420, 4.6),
                                                                        (4, 'Happy Trails Park', 'PARK',    34.0522, -118.2437, 4.8);
 
--- ---------------------------------------------------------------------------
--- 7. Chats & Messages
--- ---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+-- 7. Events
+---------------------------------------------------------------------------
+INSERT INTO events (
+    id, title, description, event_date_time, location, host_id
+) VALUES
+      (3, 'City Paws Tour', 'Explore the city with our dogs',
+       TIMESTAMP '2025-06-01 10:00:00',
+       ST_GeogFromText('SRID=4326;POINT(-3.7038 40.4168)'), 3),
+      (4, 'Techies Dog Meetup', 'Hangout for tech enthusiasts and pets',
+       TIMESTAMP '2025-06-05 14:00:00',
+       ST_GeogFromText('SRID=4326;POINT(-74.0060 40.7128)'), 5),
+      (5, 'Coastal Run', 'Morning run by the coast',
+       TIMESTAMP '2025-06-10 08:30:00',
+       ST_GeogFromText('SRID=4326;POINT(151.2093 -33.8688)'), 7);
+
+INSERT INTO event_participants (event_id, user_id, status) VALUES
+    (3, 3, 'GOING'),
+    (3, 4, 'INTERESTED'),
+    (4, 5, 'GOING'),
+    (5, 7, 'GOING'),
+    (5, 8, 'INTERESTED');
+
+---------------------------------------------------------------------------
+-- 8. Chats & Messages
+---------------------------------------------------------------------------
 INSERT INTO chats (id, type, event_id) VALUES
                                            (2, 'PRIVATE', NULL),
                                            (3, 'PRIVATE', NULL),
@@ -248,12 +289,9 @@ INSERT INTO messages (id, content, timestamp, chat_id, sender_id) VALUES
                                                                       (7, 'Anyone up for a hike Sunday?',  TIMESTAMP '2025-05-28 11:10:00', 4, 7),
                                                                       (8, 'Hey Hana, want to walk our dogs this weekend?', TIMESTAMP '2025-05-28 11:32:00', 5, 7),
                                                                       (9, 'Sure George, let''s meet at the park.',         TIMESTAMP '2025-05-28 11:33:00', 5, 8),
-                                                                      (10, 'Hi Julia, join the dog run tomorrow?',         TIMESTAMP '2025-05-28 11:42:00', 6, 9),
-                                                                      (11, 'Sounds great Igor, see you then!',             TIMESTAMP '2025-05-28 11:43:00', 6, 10);
-
--- ---------------------------------------------------------------------------
--- 8. Matches & Swipes
--- ---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+-- 9. Matches & Swipes
+---------------------------------------------------------------------------
 INSERT INTO matches (id, user1_id, user2_id, created_at) VALUES
                                                              (2, 3, 4, TIMESTAMP '2025-05-28 11:15:00'),
                                                              (3, 5, 6, TIMESTAMP '2025-05-28 11:20:00'),
@@ -271,19 +309,20 @@ INSERT INTO swipes (id, liker_id, target_id, decision, created_at) VALUES
                                                                        (9, 10, 9, 'LIKE', TIMESTAMP '2025-05-28 11:39:20');
 
 -- ---------------------------------------------------------------------------
--- 9. Payments  (Premium & test payments)
+-- 10. Payments  (Premium & test payments)
 -- ---------------------------------------------------------------------------
 INSERT INTO payments (id, amount, currency, status, timestamp, user_id) VALUES
                                                                             (3, 9.99, 'USD', 'PAID',     TIMESTAMP '2025-05-28 11:25:00', 5),  -- Elliot monthly premium
                                                                             (4, 49.99, 'USD', 'PAID',    TIMESTAMP '2025-05-28 11:26:00', 10);
 
 -- ---------------------------------------------------------------------------
--- 10. Sequence synchronisation
+-- 11. Sequence synchronisation
 -- ---------------------------------------------------------------------------
 SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
 SELECT setval('dogs_id_seq',      (SELECT MAX(id) FROM dogs));
 SELECT setval('services_id_seq',  (SELECT MAX(id) FROM services));
 SELECT setval('chats_id_seq',     (SELECT MAX(id) FROM chats));
+SELECT setval('events_id_seq',  (SELECT MAX(id) FROM events));
 SELECT setval('messages_id_seq',  (SELECT MAX(id) FROM messages));
 SELECT setval('matches_id_seq',   (SELECT MAX(id) FROM matches));
 SELECT setval('swipes_id_seq',    (SELECT MAX(id) FROM swipes));
