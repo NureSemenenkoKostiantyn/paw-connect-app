@@ -83,10 +83,13 @@ public class EventService {
 
     public void leaveEvent(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
-        participantRepository.deleteByEventIdAndUserId(id, userId);
-        User user = userService.getCurrentUserEntity();
-        Chat chat = chatService.getChatByEventId(id);
-        chatService.removeParticipant(chat, user);
+        boolean wasParticipant = participantRepository.existsByEventIdAndUserId(id, userId);
+        if (wasParticipant) {
+            participantRepository.deleteByEventIdAndUserId(id, userId);
+            User user = userService.getCurrentUserEntity();
+            Chat chat = chatService.getChatByEventId(id);
+            chatService.removeParticipant(chat, user);
+        }
     }
 
     public void deleteEvent(Long id) {
