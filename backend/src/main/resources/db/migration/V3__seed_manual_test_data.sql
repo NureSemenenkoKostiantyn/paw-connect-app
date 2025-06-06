@@ -288,7 +288,7 @@ INSERT INTO messages (id, content, timestamp, chat_id, sender_id) VALUES
                                                                       (6, 'Sounds good — park at 6pm?',    TIMESTAMP '2025-05-28 11:06:00', 3, 6),
                                                                       (7, 'Anyone up for a hike Sunday?',  TIMESTAMP '2025-05-28 11:10:00', 4, 7),
                                                                       (8, 'Hey Hana, want to walk our dogs this weekend?', TIMESTAMP '2025-05-28 11:32:00', 5, 7),
-                                                                      (9, 'Sure George, let''s meet at the park.',         TIMESTAMP '2025-05-28 11:33:00', 5, 8),
+                                                                      (9, 'Sure George, let''s meet at the park.',         TIMESTAMP '2025-05-28 11:33:00', 5, 8);
 ---------------------------------------------------------------------------
 -- 9. Matches & Swipes
 ---------------------------------------------------------------------------
