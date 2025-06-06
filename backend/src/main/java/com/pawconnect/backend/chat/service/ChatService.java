@@ -66,6 +66,10 @@ public class ChatService {
         chatParticipantRepository.deleteByChatIdAndUserId(chat.getId(), user.getId());
     }
 
+    public void deleteChat(Chat chat) {
+        chatRepository.delete(chat);
+    }
+
     public Chat createGroupChatForEvent(com.pawconnect.backend.event.model.Event event) {
         Chat chat = Chat.builder()
                 .type(ChatType.GROUP)
