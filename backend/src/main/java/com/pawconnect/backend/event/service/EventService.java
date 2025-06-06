@@ -69,6 +69,9 @@ public class EventService {
     public void joinEvent(Long id, EventParticipantStatus status) {
         Event event = getEventEntity(id);
         User user = userService.getCurrentUserEntity();
+        if (event.getHost().getId().equals(user.getId())) {
+            throw new IllegalStateException("Host cannot join their own event");
+        }
         if (!participantRepository.existsByEventIdAndUserId(id, user.getId())) {
             EventParticipant participant = EventParticipant.builder()
                     .event(event)
