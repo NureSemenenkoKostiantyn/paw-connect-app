@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import '../services/auth_service.dart';
-import '../../services/user_service.dart';
-import '../../services/preference_service.dart';
-import '../../services/completion_utils.dart';
-import '../../models/current_user_response.dart';
-import '../../models/preference_response.dart';
+import '../../../services/user_service.dart';
+import '../../../services/preference_service.dart';
+import '../../../services/completion_utils.dart';
+import '../../../models/current_user_response.dart';
+import '../../../models/preference_response.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
