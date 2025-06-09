@@ -31,3 +31,9 @@ flutter run --dart-define=API_BASE_URL=http://localhost:8080
 
 The app reads the API base URL from the `API_BASE_URL` environment variable.
 If not provided, it defaults to `http://localhost:8080`.
+
+After signing in, the app automatically loads your profile and preferences.
+If any required information is missing you will be redirected to the
+multi‑step profile completion flow.  This wizard collects profile fields,
+preference settings and at least one dog entry before navigating to the home
+screen.
