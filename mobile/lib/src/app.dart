@@ -5,6 +5,7 @@ import 'features/auth/presentation/signup_screen.dart';
 import 'features/map/presentation/map_screen.dart';
 import 'features/profile/profile_completion_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
+import 'features/dog/presentation/dog_profile_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
@@ -32,6 +33,14 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/profile/complete',
         builder: (context, state) => const ProfileCompletionScreen(),
+      ),
+      GoRoute(
+        path: '/dogs/:id',
+        name: 'dog-profile',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return DogProfileScreen(dogId: id);
+        },
       ),
     ],
   );
