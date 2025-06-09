@@ -32,6 +32,11 @@ flutter run --dart-define=API_BASE_URL=http://localhost:8080
 The app reads the API base URL from the `API_BASE_URL` environment variable.
 If not provided, it defaults to `http://localhost:8080`.
 
+All HTTP requests go through a shared `Dio` client defined in
+`lib/src/services/http_client.dart`. The client stores cookies with a
+`CookieJar` and uses a `CookieManager` interceptor so that the JWT cookie
+received during sign‑in is automatically included in subsequent API calls.
+
 After signing in, the app automatically loads your profile and preferences.
 If any required information is missing you will be redirected to the
 multi‑step profile completion flow.  This wizard collects profile fields,
