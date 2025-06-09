@@ -1,17 +1,18 @@
 import 'package:dio/dio.dart';
-import '../env.dart';
+
+import 'http_client.dart';
 
 class UserService {
   UserService._();
 
   static final UserService instance = UserService._();
-  final Dio _dio = Dio(BaseOptions(baseUrl: '$apiBaseUrl/api/users'));
+  final Dio _dio = HttpClient.instance.dio;
 
   Future<Response<dynamic>> getCurrentUser() {
-    return _dio.get('/current');
+    return _dio.get('/users/current');
   }
 
   Future<Response<dynamic>> updateCurrentUser(Map<String, dynamic> data) {
-    return _dio.put('/current', data: data);
+    return _dio.put('/users/current', data: data);
   }
 }
