@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
 import 'features/map/presentation/map_screen.dart';
+import 'features/profile/profile_completion_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
@@ -22,6 +23,10 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/home',
         builder: (context, state) => const MyHomePage(title: 'Home'),
+      ),
+      GoRoute(
+        path: '/profile/complete',
+        builder: (context, state) => const ProfileCompletionScreen(),
       ),
     ],
   );

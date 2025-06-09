@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import '../services/auth_service.dart';
+import '../../services/user_service.dart';
+import '../../services/preference_service.dart';
+import '../../services/completion_utils.dart';
+import '../../models/current_user_response.dart';
+import '../../models/preference_response.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +27,15 @@ class _LoginScreenState extends State<LoginScreen> {
       await AuthService.instance
           .signIn(_usernameController.text, _passwordController.text);
       if (mounted) {
-        context.go('/home');
+        final userRes = await UserService.instance.getCurrentUser();
+        final prefRes = await PreferenceService.instance.getCurrent();
+        final user = CurrentUserResponse.fromJson(userRes.data);
+        final pref = PreferenceResponse.fromJson(prefRes.data);
+        if (isProfileComplete(user) && isPreferencesComplete(pref)) {
+          context.go('/home');
+        } else {
+          context.go('/profile/complete');
+        }
       }
     } on DioException catch (e) {
       final message = e.response?.data['message'] ?? e.message;
