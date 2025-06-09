@@ -36,6 +36,7 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/dogs/:id',
+        name: 'dog-profile',
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           return DogProfileScreen(dogId: id);

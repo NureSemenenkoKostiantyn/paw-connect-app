@@ -111,7 +111,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 final dog = Dog.fromJson(data);
                                 return DogCard(
                                   dog: dog,
-                                  onTap: () => context.push('/dogs/${dog.id}'),
+                                  onTap: () => context.pushNamed(
+                                    'dog-profile',
+                                    pathParameters: {'id': dog.id.toString()},
+                                  ),
                                 );
                               }).toList(),
                             ),
