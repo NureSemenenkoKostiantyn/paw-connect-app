@@ -1,16 +1,32 @@
-# client
+# PawConnect Mobile App
 
-A new Flutter project.
+This directory contains the Flutter client for the PawConnect platform.
 
-## Getting Started
+## Prerequisites
 
-This project is a starting point for a Flutter application.
+- **Flutter** 3.x installed and on your `PATH`
+- A running PawConnect backend (Java Spring Boot)
 
-A few resources to get you started if this is your first Flutter project:
+### Start the backend
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+From the repository root:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd backend
+# using Docker
+docker-compose up
+# or using Maven
+./mvnw spring-boot:run
+```
+
+The backend serves REST endpoints on `http://localhost:8080`.
+
+### Run the Flutter app
+
+```bash
+cd mobile
+flutter pub get
+flutter run
+```
+
+The app expects the backend to be reachable at `http://localhost:8080`.
