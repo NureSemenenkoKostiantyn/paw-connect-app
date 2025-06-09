@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
+import 'features/map/presentation/map_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
@@ -47,10 +48,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Home')),
-    Center(child: Text('Chat')),
-    Center(child: Text('Profile')),
+  static final List<Widget> _pages = <Widget>[
+    const Center(child: Text('Home')),
+    const MapScreen(),
+    const Center(child: Text('Chat')),
+    const Center(child: Text('Profile')),
   ];
 
   void _onItemTapped(int index) {
@@ -74,6 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
