@@ -17,5 +17,9 @@ class HttpClient {
   late final CookieJar _cookieJar;
 
   Dio get dio => _dio;
+
+  Future<void> clearCookies() async {
+    await _cookieJar.deleteAll();
+  }
 }
 

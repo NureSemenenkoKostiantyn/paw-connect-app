@@ -2,7 +2,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../models/current_user_response.dart';
+import '../../../models/dog.dart';
 import '../../../services/user_service.dart';
+import '../../../services/http_client.dart';
+import '../../dog/presentation/dog_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,10 +34,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _logout() async {
+    await HttpClient.instance.clearCookies();
+    if (mounted) context.go('/');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: _loadUser,
         child: _loading
@@ -44,9 +57,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(16),
                 child: _user == null
                     ? const Text('Failed to load profile')
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                    : Card(
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                           Center(
                             child: CircleAvatar(
                               radius: 50,
@@ -57,7 +74,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          Text('Username: ${_user!.username}'),
+                          Text(
+                            _user!.username,
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
                           const SizedBox(height: 8),
                           Text('Email: ${_user!.email}'),
                           if (_user!.bio != null) ...[
@@ -87,13 +107,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const Text('No dogs added')
                           else
                             Column(
-                              children: _user!.dogs
-                                  .map<Widget>((dog) {
-                                final name = dog['name'] ?? 'Unnamed';
-                                final breed = dog['breed'];
-                                return ListTile(
-                                  title: Text(name),
-                                  subtitle: breed != null ? Text(breed) : null,
+                              children: _user!.dogs.map<Widget>((data) {
+                                final dog = Dog.fromJson(data);
+                                return DogCard(
+                                  dog: dog,
+                                  onTap: () => context.push('/dogs/${dog.id}'),
                                 );
                               }).toList(),
                             ),
@@ -106,7 +124,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-              ),
+                    ),
+                  ),
+        ),
       ),
     );
   }
