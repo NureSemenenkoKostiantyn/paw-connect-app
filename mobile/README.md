@@ -26,7 +26,8 @@ The backend serves REST endpoints on `http://localhost:8080`.
 ```bash
 cd mobile
 flutter pub get
-flutter run
+flutter run --dart-define=API_BASE_URL=http://localhost:8080
 ```
 
-The app expects the backend to be reachable at `http://localhost:8080`.
+The app reads the API base URL from the `API_BASE_URL` environment variable.
+If not provided, it defaults to `http://localhost:8080`.
