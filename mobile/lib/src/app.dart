@@ -4,6 +4,7 @@ import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
 import 'features/map/presentation/map_screen.dart';
 import 'features/profile/profile_completion_screen.dart';
+import 'features/profile/presentation/profile_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
@@ -23,6 +24,10 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/home',
         builder: (context, state) => const MyHomePage(title: 'Home'),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/profile/complete',
@@ -57,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Center(child: Text('Home')),
     const MapScreen(),
     const Center(child: Text('Chat')),
-    const Center(child: Text('Profile')),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
