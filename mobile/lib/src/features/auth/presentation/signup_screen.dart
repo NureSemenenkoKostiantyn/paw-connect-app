@@ -57,6 +57,11 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              'Create account',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 24),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(labelText: 'Username'),
