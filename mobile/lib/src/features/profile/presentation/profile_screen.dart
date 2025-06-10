@@ -1,11 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../models/current_user_response.dart';
 import '../../../models/dog.dart';
 import '../../../services/user_service.dart';
-import '../../../services/http_client.dart';
 import '../../dog/presentation/dog_card.dart';
+import '../../../shared/main_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -34,20 +33,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _logout() async {
-    await HttpClient.instance.clearCookies();
-    if (mounted) context.go('/');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        actions: [
-          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
-        ],
-      ),
+      appBar: const MainAppBar(),
       body: RefreshIndicator(
         onRefresh: _loadUser,
         child: _loading
