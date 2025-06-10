@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../services/http_client.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-  const MainAppBar({super.key, required this.title});
+  const MainAppBar({super.key});
 
   Future<void> _logout(BuildContext context) async {
     await HttpClient.instance.clearCookies();
@@ -20,7 +19,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           SvgPicture.asset('assets/logo.svg', height: 32),
           const SizedBox(width: 8),
-          Text(title),
+          const Text('PawConnect'),
         ],
       ),
       actions: [

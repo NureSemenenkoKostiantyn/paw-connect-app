@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(title: 'Profile'),
+      appBar: const MainAppBar(),
       body: RefreshIndicator(
         onRefresh: _loadUser,
         child: _loading

@@ -7,7 +7,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MainAppBar(title: 'Home'),
+      appBar: MainAppBar(),
       body: Center(child: Text('Home page placeholder')),
     );
   }
