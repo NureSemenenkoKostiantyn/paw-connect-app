@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tindercard/flutter_tindercard.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../../models/candidate_user.dart';
 import '../../../services/match_service.dart';
@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final CardController _cardController = CardController();
+  final CardSwiperController _cardController = CardSwiperController();
   final List<CandidateUser> _candidates = [];
   bool _loading = true;
 
@@ -53,23 +53,21 @@ class _HomeScreenState extends State<HomeScreen> {
       body = const Center(child: Text('No candidates found'));
     } else {
       body = Center(
-        child: TinderSwapCard(
-          cardController: _cardController,
-          totalNum: _candidates.length,
-          maxWidth: MediaQuery.of(context).size.width * 0.9,
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
-          minWidth: MediaQuery.of(context).size.width * 0.8,
-          minHeight: MediaQuery.of(context).size.height * 0.7,
-          swipeCompleteCallback:
-              (CardSwipeOrientation orientation, int index) async {
-            if (orientation == CardSwipeOrientation.LEFT) {
-              await _createSwipe(index, 'PASS');
-            } else if (orientation == CardSwipeOrientation.RIGHT) {
-              await _createSwipe(index, 'LIKE');
+        child: CardSwiper(
+          controller: _cardController,
+          cardsCount: _candidates.length,
+          numberOfCardsDisplayed: 1,
+          onSwipe:
+              (int previousIndex, int? currentIndex, CardSwiperDirection direction) async {
+            if (direction == CardSwiperDirection.left) {
+              await _createSwipe(previousIndex, 'PASS');
+            } else if (direction == CardSwiperDirection.right) {
+              await _createSwipe(previousIndex, 'LIKE');
             }
-            if (index == _candidates.length - 1) {
+            if (previousIndex == _candidates.length - 1) {
               _loadCandidates();
             }
+            return true;
           },
           cardBuilder: (context, index) {
             return CandidateCard(candidate: _candidates[index]);
