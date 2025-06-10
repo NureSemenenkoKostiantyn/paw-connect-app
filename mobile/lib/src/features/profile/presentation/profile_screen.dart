@@ -67,10 +67,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Center(
                             child: CircleAvatar(
                               radius: 50,
-                              backgroundImage: NetworkImage(
-                                _user!.profilePhotoUrl ??
-                                    'https://avatar.iran.liara.run/public/${Random().nextBool() ? 'boy' : 'girl'}',
-                              ),
+                              child: Text(
+                                _user!.username.isNotEmpty ? _user!.username[0].toUpperCase() : '?',
+                                style: TextStyle(fontSize: 40),
+                                ),
                             ),
                           ),
                           const SizedBox(height: 16),

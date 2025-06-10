@@ -24,7 +24,7 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const MyHomePage(title: 'Home'),
+        builder: (context, state) => const MyHomePage(),
       ),
       GoRoute(
         path: '/profile',
@@ -48,7 +48,6 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'PawConnect',
       theme: AppTheme.light,
       routerConfig: _router,
     );
@@ -56,9 +55,7 @@ class App extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -83,10 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
