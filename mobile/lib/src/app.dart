@@ -11,10 +11,12 @@ import 'features/dog/presentation/dog_profile_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
-  App({super.key});
+  App({super.key, required this.initialLocation});
 
-  final GoRouter _router = GoRouter(
-    initialLocation: '/',
+  final String initialLocation;
+
+  late final GoRouter _router = GoRouter(
+    initialLocation: initialLocation,
     routes: [
       GoRoute(
         path: '/',
