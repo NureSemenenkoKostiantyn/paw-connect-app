@@ -37,6 +37,8 @@ All HTTP requests go through a shared `Dio` client defined in
 `CookieJar` and uses a `CookieManager` interceptor so that the JWT cookie
 received during sign‑in is automatically included in subsequent API calls.
 
+Swipe-based matchmaking is powered by the [`flutter_tindercard`](https://pub.dev/packages/flutter_tindercard) package.
+
 After signing in, the app automatically loads your profile and preferences.
 If any required information is missing you will be redirected to the
 multi‑step profile completion flow.  This wizard collects profile fields,
