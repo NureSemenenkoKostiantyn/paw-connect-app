@@ -18,11 +18,11 @@ class HttpClient {
 
   Dio get dio => _dio;
 
-  bool hasAuthCookie() {
-    final cookies =
-        _cookieJar.loadForRequest(Uri.parse('$apiBaseUrl/api'));
-    return cookies.any((cookie) => cookie.name == jwtCookieName);
-  }
+Future<bool> hasAuthCookie() async {
+  final cookies =
+      await _cookieJar.loadForRequest(Uri.parse('$apiBaseUrl/api'));
+  return cookies.any((cookie) => cookie.name == jwtCookieName);
+}
 
   Future<void> clearCookies() async {
     await _cookieJar.deleteAll();
