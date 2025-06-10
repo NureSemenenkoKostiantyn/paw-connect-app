@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
 import 'features/map/presentation/map_screen.dart';
+import 'features/home/presentation/home_screen.dart';
+import 'features/chat/presentation/chat_screen.dart';
 import 'features/profile/profile_completion_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
@@ -65,9 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    const Center(child: Text('Home')),
+    const HomeScreen(),
     const MapScreen(),
-    const Center(child: Text('Chat')),
+    const ChatScreen(),
     const ProfileScreen(),
   ];
 
