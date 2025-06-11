@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipant, ChatParticipantId> {
     boolean existsByChatIdAndUserId(Long chatId, Long userId);
     void deleteByChatIdAndUserId(Long chatId, Long userId);
+    java.util.Optional<ChatParticipant> findByChatIdAndUserId(Long chatId, Long userId);
 }
