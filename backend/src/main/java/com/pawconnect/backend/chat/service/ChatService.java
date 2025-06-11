@@ -3,10 +3,13 @@ package com.pawconnect.backend.chat.service;
 import com.pawconnect.backend.chat.dto.ChatCreateRequest;
 import com.pawconnect.backend.chat.dto.ChatMapper;
 import com.pawconnect.backend.chat.dto.ChatResponse;
+import com.pawconnect.backend.chat.dto.ChatMessageResponse;
 import com.pawconnect.backend.chat.model.Chat;
 import com.pawconnect.backend.chat.model.ChatParticipant;
+import com.pawconnect.backend.chat.model.Message;
 import com.pawconnect.backend.chat.repository.ChatRepository;
 import com.pawconnect.backend.chat.repository.ChatParticipantRepository;
+import com.pawconnect.backend.chat.repository.MessageRepository;
 import com.pawconnect.backend.common.exception.NotFoundException;
 import com.pawconnect.backend.common.exception.UnauthorizedAccessException;
 import com.pawconnect.backend.common.enums.ChatType;
@@ -28,6 +31,7 @@ public class ChatService {
     private final ChatMapper chatMapper;
     private final UserService userService;
     private final ChatParticipantRepository chatParticipantRepository;
+    private final MessageRepository messageRepository;
 
     public ChatResponse createChat(ChatCreateRequest request) {
         Chat chat = chatMapper.toEntity(request);
@@ -103,8 +107,32 @@ public class ChatService {
     public List<ChatResponse> getChatsByUserId(Long userId) {
         return chatRepository.findByParticipantsUserId(userId)
                 .stream()
-                .map(chatMapper::toDto)
+                .map(chat -> buildChatResponse(chat, userId))
                 .toList();
+    }
+
+    private ChatResponse buildChatResponse(Chat chat, Long userId) {
+        // Retrieve latest message
+        Message last = messageRepository.findFirstByChatIdOrderByTimestampDesc(chat.getId());
+        ChatMessageResponse lastDto = null;
+        if (last != null) {
+            lastDto = new ChatMessageResponse();
+            lastDto.setId(last.getId());
+            lastDto.setChatId(chat.getId());
+            lastDto.setSenderId(last.getSender().getId());
+            lastDto.setContent(last.getContent());
+            lastDto.setTimestamp(last.getTimestamp());
+        }
+
+        // Determine unread message count for the user
+        java.util.Optional<ChatParticipant> participantOpt =
+                chatParticipantRepository.findByChatIdAndUserId(chat.getId(), userId);
+        long lastReadId = participantOpt.flatMap(p ->
+                        java.util.Optional.ofNullable(p.getLastReadMessage()).map(Message::getId))
+                .orElse(0L);
+        int unread = messageRepository.countByChatIdAndIdGreaterThan(chat.getId(), lastReadId);
+
+        return chatMapper.toDto(chat, lastDto, unread);
     }
 
     public Chat getChatByEventId(Long eventId) {
