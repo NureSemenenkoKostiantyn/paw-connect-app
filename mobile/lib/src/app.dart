@@ -4,6 +4,7 @@ import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
 import 'features/map/presentation/map_screen.dart';
 import 'features/home/presentation/home_screen.dart';
+import 'features/chat/presentation/chat_list_screen.dart';
 import 'features/chat/presentation/chat_screen.dart';
 import 'features/profile/profile_completion_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
@@ -46,6 +47,13 @@ class App extends StatelessWidget {
           return DogProfileScreen(dogId: id);
         },
       ),
+      GoRoute(
+        path: '/chats/:id',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return ChatScreen(chatId: id);
+        },
+      ),
     ],
   );
 
@@ -71,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static final List<Widget> _pages = <Widget>[
     const HomeScreen(),
     const MapScreen(),
-    const ChatScreen(),
+    const ChatListScreen(),
     const ProfileScreen(),
   ];
 
