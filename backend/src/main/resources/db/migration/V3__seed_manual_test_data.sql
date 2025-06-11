@@ -126,7 +126,7 @@ SELECT setval('payments_id_seq',  (SELECT MAX(id) FROM payments));
 -- ---------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------
--- 1. Users (IDs 3‑15)
+-- 1. Users (IDs 3‑35)
 -- ---------------------------------------------------------------------------
 INSERT INTO users (
     id, username, email, password_hash, bio, birthdate, gender,
@@ -171,7 +171,27 @@ INSERT INTO users (
        ST_GeogFromText('SRID=4326;POINT(-0.1215 51.5085)'), TRUE, 'https://example.com/nina.jpg', TIMESTAMP '2025-05-28 10:55:00'),
       (15,'owen',     'owen@example.com',     '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
        'History buff', DATE '1989-07-07', 'MALE',
-       ST_GeogFromText('SRID=4326;POINT(-0.1225 51.5090)'), TRUE, 'https://example.com/owen.jpg', TIMESTAMP '2025-05-28 11:00:00');
+       ST_GeogFromText('SRID=4326;POINT(-0.1225 51.5090)'), TRUE, 'https://example.com/owen.jpg', TIMESTAMP '2025-05-28 11:00:00'),
+      (16, 'paula', 'paula@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Paula', DATE '1986-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1300 51.5000)'), TRUE, 'https://example.com/paula.jpg', TIMESTAMP '2025-05-28 12:00:00'),
+      (17, 'quentin', 'quentin@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Quentin', DATE '1987-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1310 51.5010)'), TRUE, 'https://example.com/quentin.jpg', TIMESTAMP '2025-05-28 12:01:00'),
+      (18, 'rachel', 'rachel@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Rachel', DATE '1988-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1320 51.5020)'), TRUE, 'https://example.com/rachel.jpg', TIMESTAMP '2025-05-28 12:02:00'),
+      (19, 'sam', 'sam@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Sam', DATE '1989-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1330 51.5030)'), TRUE, 'https://example.com/sam.jpg', TIMESTAMP '2025-05-28 12:03:00'),
+      (20, 'tina', 'tina@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Tina', DATE '1990-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1340 51.5040)'), TRUE, 'https://example.com/tina.jpg', TIMESTAMP '2025-05-28 12:04:00'),
+      (21, 'ursula', 'ursula@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Ursula', DATE '1991-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1350 51.5050)'), TRUE, 'https://example.com/ursula.jpg', TIMESTAMP '2025-05-28 12:05:00'),
+      (22, 'victor', 'victor@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Victor', DATE '1992-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1360 51.5060)'), TRUE, 'https://example.com/victor.jpg', TIMESTAMP '2025-05-28 12:06:00'),
+      (23, 'wendy', 'wendy@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Wendy', DATE '1993-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1370 51.5070)'), TRUE, 'https://example.com/wendy.jpg', TIMESTAMP '2025-05-28 12:07:00'),
+      (24, 'xavier', 'xavier@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Xavier', DATE '1994-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1380 51.5080)'), TRUE, 'https://example.com/xavier.jpg', TIMESTAMP '2025-05-28 12:08:00'),
+      (25, 'yara', 'yara@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Yara', DATE '1995-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1390 51.5090)'), TRUE, 'https://example.com/yara.jpg', TIMESTAMP '2025-05-28 12:09:00'),
+      (26, 'zack', 'zack@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Zack', DATE '1996-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1400 51.5100)'), TRUE, 'https://example.com/zack.jpg', TIMESTAMP '2025-05-28 12:10:00'),
+      (27, 'abby', 'abby@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Abby', DATE '1997-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1410 51.5110)'), TRUE, 'https://example.com/abby.jpg', TIMESTAMP '2025-05-28 12:11:00'),
+      (28, 'brad', 'brad@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Brad', DATE '1998-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1420 51.5120)'), TRUE, 'https://example.com/brad.jpg', TIMESTAMP '2025-05-28 12:12:00'),
+      (29, 'carmen', 'carmen@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Carmen', DATE '1999-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1430 51.5130)'), TRUE, 'https://example.com/carmen.jpg', TIMESTAMP '2025-05-28 12:13:00'),
+      (30, 'dan', 'dan@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Dan', DATE '2000-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1440 51.5140)'), TRUE, 'https://example.com/dan.jpg', TIMESTAMP '2025-05-28 12:14:00'),
+      (31, 'ella', 'ella@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Ella', DATE '2001-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1450 51.5150)'), TRUE, 'https://example.com/ella.jpg', TIMESTAMP '2025-05-28 12:15:00'),
+      (32, 'frank', 'frank@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Frank', DATE '2002-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1460 51.5160)'), TRUE, 'https://example.com/frank.jpg', TIMESTAMP '2025-05-28 12:16:00'),
+      (33, 'grace', 'grace@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Grace', DATE '2003-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1470 51.5170)'), TRUE, 'https://example.com/grace.jpg', TIMESTAMP '2025-05-28 12:17:00'),
+      (34, 'hugo', 'hugo@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Hugo', DATE '2004-01-01', 'FEMALE', ST_GeogFromText('SRID=4326;POINT(-0.1480 51.5180)'), TRUE, 'https://example.com/hugo.jpg', TIMESTAMP '2025-05-28 12:18:00'),
+      (35, 'iris', 'iris@example.com', '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi', 'Bio for Iris', DATE '2005-01-01', 'MALE', ST_GeogFromText('SRID=4326;POINT(-0.1490 51.5190)'), TRUE, 'https://example.com/iris.jpg', TIMESTAMP '2025-05-28 12:19:00');
 
 -- ---------------------------------------------------------------------------
 -- 2. User ↔ Role  (all regular users except Elliot is premium)
@@ -188,8 +208,28 @@ INSERT INTO user_roles (user_id, role_id) VALUES
                                               (11,1),
                                               (12,1),
                                               (13,1),
-                                              (14,1),
-                                              (15,1);
+                                             (14,1),
+                                             (15,1),
+                                             (16,1),
+                                             (17,1),
+                                             (18,1),
+                                             (19,1),
+                                             (20,1),
+                                             (21,1),
+                                             (22,1),
+                                             (23,1),
+                                             (24,1),
+                                             (25,1),
+                                             (26,1),
+                                             (27,1),
+                                             (28,1),
+                                             (29,1),
+                                             (30,1),
+                                             (31,1),
+                                             (32,1),
+                                             (33,1),
+                                             (34,1),
+                                             (35,1);
 
 -- ---------------------------------------------------------------------------
 -- 3. User ↔ Languages
@@ -207,7 +247,27 @@ INSERT INTO user_languages (user_id, language_id) VALUES
                                                       (12,1),
                                                       (13,1),
                                                       (14,1),
-                                                      (15,1);
+                                                      (15,1),
+                                                      (16,1),
+                                                      (17,1),
+                                                      (18,1),
+                                                      (19,1),
+                                                      (20,1),
+                                                      (21,1),
+                                                      (22,1),
+                                                      (23,1),
+                                                      (24,1),
+                                                      (25,1),
+                                                      (26,1),
+                                                      (27,1),
+                                                      (28,1),
+                                                      (29,1),
+                                                      (30,1),
+                                                      (31,1),
+                                                      (32,1),
+                                                      (33,1),
+                                                      (34,1),
+                                                      (35,1);
 
 -- ---------------------------------------------------------------------------
 -- 4. Preferences
@@ -227,10 +287,30 @@ INSERT INTO preferences (
       (12, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'MALE'),
       (13, 'CALM',     'LOW',    'SMALL',  'FEMALE'),
       (14, 'FRIENDLY', 'HIGH',   'MEDIUM', 'MALE'),
-      (15, 'PLAYFUL',  'MEDIUM', 'MEDIUM', 'FEMALE');
+      (15, 'PLAYFUL',  'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (16, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (17, 'CALM', 'LOW', 'SMALL', 'MALE'),
+      (18, 'PLAYFUL', 'HIGH', 'LARGE', 'FEMALE'),
+      (19, 'FRIENDLY', 'LOW', 'MEDIUM', 'MALE'),
+      (20, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (21, 'CALM', 'LOW', 'SMALL', 'MALE'),
+      (22, 'PLAYFUL', 'HIGH', 'LARGE', 'FEMALE'),
+      (23, 'FRIENDLY', 'LOW', 'MEDIUM', 'MALE'),
+      (24, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (25, 'CALM', 'LOW', 'SMALL', 'MALE'),
+      (26, 'PLAYFUL', 'HIGH', 'LARGE', 'FEMALE'),
+      (27, 'FRIENDLY', 'LOW', 'MEDIUM', 'MALE'),
+      (28, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (29, 'CALM', 'LOW', 'SMALL', 'MALE'),
+      (30, 'PLAYFUL', 'HIGH', 'LARGE', 'FEMALE'),
+      (31, 'FRIENDLY', 'LOW', 'MEDIUM', 'MALE'),
+      (32, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'FEMALE'),
+      (33, 'CALM', 'LOW', 'SMALL', 'MALE'),
+      (34, 'PLAYFUL', 'HIGH', 'LARGE', 'FEMALE'),
+      (35, 'FRIENDLY', 'LOW', 'MEDIUM', 'MALE');
 
 -- ---------------------------------------------------------------------------
--- 5. Dogs  (IDs 3‑21)
+-- 5. Dogs  (IDs 3‑41)
 --      Each user owns 1‑3 dogs to cover edge‑cases.
 -- ---------------------------------------------------------------------------
 INSERT INTO dogs (
@@ -254,7 +334,27 @@ INSERT INTO dogs (
       (18, 'Ajax',   'Boxer',           DATE '2017-07-11', 'MEDIUM', 'MALE',   'PLAYFUL',  'HIGH',   'Energetic guardian',       12),
       (19, 'Bella',  'Cocker Spaniel',  DATE '2021-05-05', 'MEDIUM', 'FEMALE', 'FRIENDLY', 'MEDIUM', 'Loves cuddles',           13),
       (20, 'Coco',   'Poodle',          DATE '2019-10-10', 'SMALL',  'FEMALE', 'PLAYFUL',  'HIGH',   'Tricks expert',           14),
-      (21, 'Duke',   'Bulldog',         DATE '2018-01-15', 'MEDIUM', 'MALE',   'CALM',     'LOW',    'Gentle soul',              15);
+      (21, 'Duke',   'Bulldog',         DATE '2018-01-15', 'MEDIUM', 'MALE',   'CALM',     'LOW',    'Gentle soul',              15),
+      (22, 'Ace', 'Dalmatian', DATE '2021-01-01', 'MEDIUM', 'MALE', 'PLAYFUL', 'HIGH', 'About Ace', 16),
+      (23, 'Buddy', 'Terrier', DATE '2021-01-02', 'SMALL', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Buddy', 17),
+      (24, 'Cleo', 'Shepherd', DATE '2021-01-03', 'LARGE', 'MALE', 'FRIENDLY', 'HIGH', 'About Cleo', 18),
+      (25, 'Daisy', 'Spaniel', DATE '2021-01-04', 'MEDIUM', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Daisy', 19),
+      (26, 'Echo', 'Beagle', DATE '2021-01-05', 'SMALL', 'MALE', 'PLAYFUL', 'HIGH', 'About Echo', 20),
+      (27, 'Fido', 'Collie', DATE '2021-01-06', 'MEDIUM', 'FEMALE', 'FRIENDLY', 'MEDIUM', 'About Fido', 21),
+      (28, 'Gigi', 'Boxer', DATE '2021-01-07', 'LARGE', 'MALE', 'PLAYFUL', 'HIGH', 'About Gigi', 22),
+      (29, 'Hazel', 'Retriever', DATE '2021-01-08', 'MEDIUM', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Hazel', 23),
+      (30, 'Indy', 'Poodle', DATE '2021-01-09', 'SMALL', 'MALE', 'FRIENDLY', 'HIGH', 'About Indy', 24),
+      (31, 'Jax', 'Bulldog', DATE '2021-01-10', 'MEDIUM', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Jax', 25),
+      (32, 'Koda', 'Husky', DATE '2021-01-11', 'LARGE', 'MALE', 'PLAYFUL', 'HIGH', 'About Koda', 26),
+      (33, 'Luna', 'Mastiff', DATE '2021-01-12', 'LARGE', 'FEMALE', 'FRIENDLY', 'MEDIUM', 'About Luna', 27),
+      (34, 'Milo2', 'Pug', DATE '2021-01-13', 'SMALL', 'MALE', 'PLAYFUL', 'HIGH', 'About Milo2', 28),
+      (35, 'Nora', 'Pointer', DATE '2021-01-14', 'MEDIUM', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Nora', 29),
+      (36, 'Ollie', 'Ridgeback', DATE '2021-01-15', 'LARGE', 'MALE', 'FRIENDLY', 'HIGH', 'About Ollie', 30),
+      (37, 'Piper', 'Shiba', DATE '2021-01-16', 'SMALL', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Piper', 31),
+      (38, 'Quinn', 'Chow', DATE '2021-01-17', 'MEDIUM', 'MALE', 'PLAYFUL', 'HIGH', 'About Quinn', 32),
+      (39, 'Rosie', 'Corgi', DATE '2021-01-18', 'SMALL', 'FEMALE', 'FRIENDLY', 'MEDIUM', 'About Rosie', 33),
+      (40, 'Scout', 'Akita', DATE '2021-01-19', 'LARGE', 'MALE', 'PLAYFUL', 'HIGH', 'About Scout', 34),
+      (41, 'Toby2', 'Labrador', DATE '2021-01-20', 'MEDIUM', 'FEMALE', 'PLAYFUL', 'MEDIUM', 'About Toby2', 35);
 
 -- ---------------------------------------------------------------------------
 -- 6. Services  (add a few more)
