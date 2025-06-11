@@ -74,7 +74,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Last message preview...',
+                          chat.lastMessage?.content ?? 'No messages yet',
                           style: Theme.of(context).textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -91,26 +91,27 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
+                      if (chat.unreadCount > 0)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${chat.unreadCount}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '1',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onPrimary,
-                              ),
-                        ),
-                      ),
                     ],
                   ),
                 ],
