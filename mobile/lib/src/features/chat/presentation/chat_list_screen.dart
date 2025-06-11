@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../models/chat_response.dart';
+import '../../../models/chat_message_response.dart';
 import '../../../services/chat_service.dart';
 import '../../../shared/main_app_bar.dart';
 
@@ -32,6 +34,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
             .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>)));
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _formatTimestamp(ChatMessageResponse? message) {
+    if (message == null) return '';
+    try {
+      final date = DateTime.parse(message.timestamp).toLocal();
+      final now = DateTime.now();
+      if (date.year == now.year &&
+          date.month == now.month &&
+          date.day == now.day) {
+        return DateFormat.Hm().format(date);
+      }
+      if (date.year == now.year) {
+        return DateFormat('d MMM').format(date);
+      }
+      return DateFormat('d MMM yyyy').format(date);
+    } catch (_) {
+      return '';
     }
   }
 
@@ -87,7 +108,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '00:00',
+                        _formatTimestamp(chat.lastMessage),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 4),
