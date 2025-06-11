@@ -1,6 +1,7 @@
 package com.pawconnect.backend.chat.model;
 
 import com.pawconnect.backend.user.model.User;
+import com.pawconnect.backend.chat.model.Message;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +23,8 @@ public class ChatParticipant {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "last_read_message_id")
+    private Message lastReadMessage;
 }
