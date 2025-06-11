@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../services/http_client.dart';
 
@@ -25,5 +27,10 @@ class AuthService {
       'email': email,
       'password': password,
     });
+  }
+
+  static Future<void> logout(BuildContext context) async {
+    await HttpClient.instance.clearCookies();
+    if (context.mounted) context.go('/');
   }
 }

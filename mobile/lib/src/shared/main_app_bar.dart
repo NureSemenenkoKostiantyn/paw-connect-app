@@ -6,9 +6,29 @@ import '../services/http_client.dart';
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({super.key});
 
-  Future<void> _logout(BuildContext context) async {
-    await HttpClient.instance.clearCookies();
-    if (context.mounted) context.go('/');
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await HttpClient.instance.clearCookies();
+      if (context.mounted) context.go('/');
+    }
   }
 
   @override
@@ -17,14 +37,37 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          SvgPicture.asset('assets/logo.svg', height: 32),
-          const SizedBox(width: 8),
-          const Text('PawConnect'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  'assets/logo.svg',
+                  height: 28,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.onPrimary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'PawConnect',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.3,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
       actions: [
         IconButton(
-          onPressed: () => _logout(context),
+          tooltip: 'Logout',
+          splashRadius: 24,
+          onPressed: () => _confirmLogout(context),
           icon: const Icon(Icons.logout),
         ),
       ],
