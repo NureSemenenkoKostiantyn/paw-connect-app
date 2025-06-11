@@ -107,30 +107,32 @@ public class ChatService {
     public List<ChatResponse> getChatsByUserId(Long userId) {
         return chatRepository.findByParticipantsUserId(userId)
                 .stream()
-                .map(chat -> {
-                    // Retrieve latest message
-                    Message last = messageRepository.findFirstByChatIdOrderByTimestampDesc(chat.getId());
-                    ChatMessageResponse lastDto = null;
-                    if (last != null) {
-                        lastDto = new ChatMessageResponse();
-                        lastDto.setId(last.getId());
-                        lastDto.setChatId(chat.getId());
-                        lastDto.setSenderId(last.getSender().getId());
-                        lastDto.setContent(last.getContent());
-                        lastDto.setTimestamp(last.getTimestamp());
-                    }
-
-                    // Determine unread message count for the user
-                    java.util.Optional<ChatParticipant> participantOpt =
-                            chatParticipantRepository.findByChatIdAndUserId(chat.getId(), userId);
-                    long lastReadId = participantOpt.flatMap(p ->
-                                    java.util.Optional.ofNullable(p.getLastReadMessage()).map(Message::getId))
-                            .orElse(0L);
-                    int unread = messageRepository.countByChatIdAndIdGreaterThan(chat.getId(), lastReadId);
-
-                    return chatMapper.toDto(chat, lastDto, unread);
-                })
+                .map(chat -> buildChatResponse(chat, userId))
                 .toList();
+    }
+
+    private ChatResponse buildChatResponse(Chat chat, Long userId) {
+        // Retrieve latest message
+        Message last = messageRepository.findFirstByChatIdOrderByTimestampDesc(chat.getId());
+        ChatMessageResponse lastDto = null;
+        if (last != null) {
+            lastDto = new ChatMessageResponse();
+            lastDto.setId(last.getId());
+            lastDto.setChatId(chat.getId());
+            lastDto.setSenderId(last.getSender().getId());
+            lastDto.setContent(last.getContent());
+            lastDto.setTimestamp(last.getTimestamp());
+        }
+
+        // Determine unread message count for the user
+        java.util.Optional<ChatParticipant> participantOpt =
+                chatParticipantRepository.findByChatIdAndUserId(chat.getId(), userId);
+        long lastReadId = participantOpt.flatMap(p ->
+                        java.util.Optional.ofNullable(p.getLastReadMessage()).map(Message::getId))
+                .orElse(0L);
+        int unread = messageRepository.countByChatIdAndIdGreaterThan(chat.getId(), lastReadId);
+
+        return chatMapper.toDto(chat, lastDto, unread);
     }
 
     public Chat getChatByEventId(Long eventId) {
