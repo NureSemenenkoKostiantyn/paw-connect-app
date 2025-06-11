@@ -5,6 +5,7 @@ import 'chat_message_response.dart';
 class ChatResponse {
   final int id;
   final String type;
+  final String title;
   final int? eventId;
   final List<int> participantIds;
   final ChatMessageResponse? lastMessage;
@@ -13,6 +14,7 @@ class ChatResponse {
   ChatResponse.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         type = json['type'],
+        title = json['title'] ?? 'Chat ${json['id']}',
         eventId = json['eventId'],
         participantIds = List<int>.from(json['participantIds'] ?? []),
         lastMessage = json['lastMessage'] != null
