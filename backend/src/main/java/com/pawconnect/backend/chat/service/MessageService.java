@@ -5,6 +5,7 @@ import com.pawconnect.backend.chat.dto.ChatMessageResponse;
 import com.pawconnect.backend.chat.model.Chat;
 import com.pawconnect.backend.chat.model.Message;
 import com.pawconnect.backend.chat.repository.ChatRepository;
+import com.pawconnect.backend.chat.repository.ChatParticipantRepository;
 import com.pawconnect.backend.chat.repository.MessageRepository;
 import com.pawconnect.backend.common.exception.NotFoundException;
 import com.pawconnect.backend.common.exception.UnauthorizedAccessException;
@@ -24,6 +25,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final UserService userService;
+    private final ChatParticipantRepository chatParticipantRepository;
 
     public ChatMessageResponse saveMessage(ChatMessageRequest request) {
         Chat chat = chatRepository.findById(request.getChatId())
@@ -60,8 +62,18 @@ public class MessageService {
         }
 
         Pageable pageable = PageRequest.of(page, limit);
-        return messageRepository.findByChatIdOrderByTimestampDesc(chatId, pageable)
-                .stream()
+        var pageRes = messageRepository.findByChatIdOrderByTimestampDesc(chatId, pageable);
+        var messages = pageRes.getContent();
+
+        if (!messages.isEmpty()) {
+            chatParticipantRepository.findByChatIdAndUserId(chatId, user.getId())
+                    .ifPresent(p -> {
+                        p.setLastReadMessage(messages.get(0));
+                        chatParticipantRepository.save(p);
+                    });
+        }
+
+        return messages.stream()
                 .map(m -> {
                     ChatMessageResponse dto = new ChatMessageResponse();
                     dto.setId(m.getId());
