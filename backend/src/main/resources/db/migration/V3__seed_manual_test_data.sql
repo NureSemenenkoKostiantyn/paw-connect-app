@@ -102,19 +102,6 @@ INSERT INTO payments (
       (1, 49.99, 'USD', 'PAID',     TIMESTAMP '2025-05-28 09:25:00', 1),
       (2, 19.99, 'USD', 'REFUNDED', TIMESTAMP '2025-05-28 09:30:00', 2);
 
----------------------------------------------------------------------------
--- 10. Sequence alignment
----------------------------------------------------------------------------
-SELECT setval('users_id_seq',     (SELECT MAX(id) FROM users));
-SELECT setval('dogs_id_seq',      (SELECT MAX(id) FROM dogs));
-SELECT setval('services_id_seq',  (SELECT MAX(id) FROM services));
-SELECT setval('chats_id_seq',     (SELECT MAX(id) FROM chats));
-SELECT setval('events_id_seq',     (SELECT MAX(id) FROM events));
-SELECT setval('messages_id_seq',  (SELECT MAX(id) FROM messages));
-SELECT setval('matches_id_seq',   (SELECT MAX(id) FROM matches));
-SELECT setval('swipes_id_seq',    (SELECT MAX(id) FROM swipes));
-SELECT setval('payments_id_seq',  (SELECT MAX(id) FROM payments));
-
 -- ---------------------------------------------------
 -- End V3 (manual-testing data)
 
@@ -161,7 +148,7 @@ INSERT INTO users (
        ST_GeogFromText('SRID=4326;POINT(103.8198 1.3521)'), TRUE, 'https://example.com/kai.jpg',      TIMESTAMP '2025-05-28 10:40:00'),
       (12,'linda',    'linda@example.com',    '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
        'Artist 🎨', DATE '1982-04-18', 'FEMALE',
-       ST_GeogFromText('SRID=4326;POINT(-0.118092 51.509865)'), TRUE, 'https://example.com/linda.jpg', TIMESTAMP '2025-05-28 10:45:00');
+       ST_GeogFromText('SRID=4326;POINT(-0.118092 51.509865)'), TRUE, 'https://example.com/linda.jpg', TIMESTAMP '2025-05-28 10:45:00'),
 
       (13,'mike',     'mike@example.com',     '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
        'Coffee addict', DATE '1990-11-11', 'MALE',
