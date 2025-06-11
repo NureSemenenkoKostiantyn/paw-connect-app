@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Page<Message> findByChatIdOrderByTimestampDesc(Long chatId, Pageable pageable);
+
+    Message findFirstByChatIdOrderByTimestampDesc(Long chatId);
+
+    int countByChatIdAndIdGreaterThan(Long chatId, Long id);
 }
