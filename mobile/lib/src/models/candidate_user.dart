@@ -9,7 +9,7 @@ class CandidateUser {
   final double distanceKm;
   final List<String> languages;
   final List<DogResponse> dogs;
-  final int score;
+  final int? score;
 
   CandidateUser.fromJson(Map<String, dynamic> json)
       : id = json['id'],
