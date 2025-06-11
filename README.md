@@ -80,3 +80,16 @@ with a WebSocket or SockJS client.
 - Chats are automatically created when two users match.
 - `/app/chat.send` – send a message to a chat; messages appear on `/topic/chats/{chatId}`.
 - `GET /api/chats/{chatId}/messages` – retrieve chat history paged by `page` and `limit`.
+
+### REST Endpoints
+
+- `GET /api/chats` – list chats for the current user. Each item is a `ChatResponse`.
+
+`ChatResponse` fields:
+
+- `id` – chat ID.
+- `type` – `PRIVATE` or `GROUP`.
+- `eventId` – associated event ID if the chat is for an event.
+- `participantIds` – user IDs participating in the chat.
+- `lastMessage` – details of the most recent message (or `null`).
+- `unreadCount` – number of unread messages for the requesting user.
