@@ -17,6 +17,7 @@ public interface ChatMapper {
 
     @Mapping(source = "event.id", target = "eventId")
     @Mapping(target = "participantIds", expression = "java(mapParticipants(chat.getParticipants()))")
+    @Mapping(target = "title", ignore = true)
     ChatResponse toDto(Chat chat);
 
     /**

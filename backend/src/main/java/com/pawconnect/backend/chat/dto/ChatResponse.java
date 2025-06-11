@@ -9,6 +9,8 @@ import java.util.List;
 public class ChatResponse {
     private Long id;
     private ChatType type;
+    /** Human-readable chat title. */
+    private String title;
     private Long eventId;
     private List<Long> participantIds;
 

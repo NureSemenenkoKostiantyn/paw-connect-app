@@ -132,7 +132,20 @@ public class ChatService {
                 .orElse(0L);
         int unread = messageRepository.countByChatIdAndIdGreaterThan(chat.getId(), lastReadId);
 
-        return chatMapper.toDto(chat, lastDto, unread);
+        ChatResponse dto = chatMapper.toDto(chat, lastDto, unread);
+
+        String title;
+        if (chat.getType() == ChatType.GROUP) {
+            title = chat.getEvent() != null ? chat.getEvent().getTitle() : "Group Chat";
+        } else {
+            title = chat.getParticipants().stream()
+                    .filter(p -> !p.getUser().getId().equals(userId))
+                    .map(p -> p.getUser().getUsername())
+                    .findFirst()
+                    .orElse("Private Chat");
+        }
+        dto.setTitle(title);
+        return dto;
     }
 
     public Chat getChatByEventId(Long eventId) {

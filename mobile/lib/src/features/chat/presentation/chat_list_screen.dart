@@ -66,7 +66,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Chat ${chat.id}',
+                          chat.title,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
