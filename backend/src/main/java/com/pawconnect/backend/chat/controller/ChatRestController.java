@@ -20,9 +20,15 @@ public class ChatRestController {
     private final MessageService messageService;
     private final ChatService chatService;
 
+    /**
+     * List chats for the currently authenticated user. The returned objects
+     * include metadata about the last message and the number of unread
+     * messages for that user.
+     */
     @GetMapping
     public ResponseEntity<List<ChatResponse>> getCurrentUserChats() {
-        return ResponseEntity.ok(chatService.getCurrentUserChats());
+        List<ChatResponse> chats = chatService.getCurrentUserChats();
+        return ResponseEntity.ok(chats);
     }
 
     @GetMapping("/{chatId}/messages")
