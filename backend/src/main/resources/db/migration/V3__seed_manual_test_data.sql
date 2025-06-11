@@ -126,7 +126,7 @@ SELECT setval('payments_id_seq',  (SELECT MAX(id) FROM payments));
 -- ---------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------
--- 1. Users (IDs 3‑12)
+-- 1. Users (IDs 3‑15)
 -- ---------------------------------------------------------------------------
 INSERT INTO users (
     id, username, email, password_hash, bio, birthdate, gender,
@@ -163,6 +163,16 @@ INSERT INTO users (
        'Artist 🎨', DATE '1982-04-18', 'FEMALE',
        ST_GeogFromText('SRID=4326;POINT(-0.118092 51.509865)'), TRUE, 'https://example.com/linda.jpg', TIMESTAMP '2025-05-28 10:45:00');
 
+      (13,'mike',     'mike@example.com',     '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
+       'Coffee addict', DATE '1990-11-11', 'MALE',
+       ST_GeogFromText('SRID=4326;POINT(-0.1200 51.5080)'), TRUE, 'https://example.com/mike.jpg', TIMESTAMP '2025-05-28 10:50:00'),
+      (14,'nina',     'nina@example.com',     '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
+       'Dog photographer', DATE '1993-02-02', 'FEMALE',
+       ST_GeogFromText('SRID=4326;POINT(-0.1215 51.5085)'), TRUE, 'https://example.com/nina.jpg', TIMESTAMP '2025-05-28 10:55:00'),
+      (15,'owen',     'owen@example.com',     '$2a$10$eUfPhw9OpHsVIH44NcRHyufdMuAyAT9yg/ZO3MvW4kAyqCQVaZ6Xi',
+       'History buff', DATE '1989-07-07', 'MALE',
+       ST_GeogFromText('SRID=4326;POINT(-0.1225 51.5090)'), TRUE, 'https://example.com/owen.jpg', TIMESTAMP '2025-05-28 11:00:00');
+
 -- ---------------------------------------------------------------------------
 -- 2. User ↔ Role  (all regular users except Elliot is premium)
 -- ---------------------------------------------------------------------------
@@ -176,7 +186,10 @@ INSERT INTO user_roles (user_id, role_id) VALUES
                                               (9, 1),
                                               (10,1),
                                               (11,1),
-                                              (12,1);
+                                              (12,1),
+                                              (13,1),
+                                              (14,1),
+                                              (15,1);
 
 -- ---------------------------------------------------------------------------
 -- 3. User ↔ Languages
@@ -191,7 +204,10 @@ INSERT INTO user_languages (user_id, language_id) VALUES
                                                       (9, 1),
                                                       (10,1), (10,2),
                                                       (11,1), (11,2), (11,3),
-                                                      (12,1);
+                                                      (12,1),
+                                                      (13,1),
+                                                      (14,1),
+                                                      (15,1);
 
 -- ---------------------------------------------------------------------------
 -- 4. Preferences
@@ -208,10 +224,13 @@ INSERT INTO preferences (
       (9,  'FRIENDLY', 'HIGH',   'MEDIUM', 'FEMALE'),
       (10, 'CALM',     'LOW',    'SMALL',  'MALE'),
       (11, 'PLAYFUL',  'HIGH',   'LARGE',  'FEMALE'),
-      (12, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'MALE');
+      (12, 'FRIENDLY', 'MEDIUM', 'MEDIUM', 'MALE'),
+      (13, 'CALM',     'LOW',    'SMALL',  'FEMALE'),
+      (14, 'FRIENDLY', 'HIGH',   'MEDIUM', 'MALE'),
+      (15, 'PLAYFUL',  'MEDIUM', 'MEDIUM', 'FEMALE');
 
 -- ---------------------------------------------------------------------------
--- 5. Dogs  (IDs 3‑18)
+-- 5. Dogs  (IDs 3‑21)
 --      Each user owns 1‑3 dogs to cover edge‑cases.
 -- ---------------------------------------------------------------------------
 INSERT INTO dogs (
@@ -232,7 +251,10 @@ INSERT INTO dogs (
       (15, 'Xena',   'Husky',           DATE '2019-12-24', 'MEDIUM', 'FEMALE', 'PLAYFUL',  'HIGH',   'Howls on command',          10),
       (16, 'Yoshi',  'Akita',           DATE '2022-04-03', 'LARGE',  'MALE',   'CALM',     'LOW',    'Very dignified',            11),
       (17, 'Zara',   'Maltese',         DATE '2020-08-01', 'SMALL',  'FEMALE', 'FRIENDLY', 'LOW',    'Lap dog deluxe',           12),
-      (18, 'Ajax',   'Boxer',           DATE '2017-07-11', 'MEDIUM', 'MALE',   'PLAYFUL',  'HIGH',   'Energetic guardian',       12);
+      (18, 'Ajax',   'Boxer',           DATE '2017-07-11', 'MEDIUM', 'MALE',   'PLAYFUL',  'HIGH',   'Energetic guardian',       12),
+      (19, 'Bella',  'Cocker Spaniel',  DATE '2021-05-05', 'MEDIUM', 'FEMALE', 'FRIENDLY', 'MEDIUM', 'Loves cuddles',           13),
+      (20, 'Coco',   'Poodle',          DATE '2019-10-10', 'SMALL',  'FEMALE', 'PLAYFUL',  'HIGH',   'Tricks expert',           14),
+      (21, 'Duke',   'Bulldog',         DATE '2018-01-15', 'MEDIUM', 'MALE',   'CALM',     'LOW',    'Gentle soul',              15);
 
 -- ---------------------------------------------------------------------------
 -- 6. Services  (add a few more)
