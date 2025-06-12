@@ -12,6 +12,7 @@ import 'features/profile/presentation/public_profile_screen.dart';
 import 'features/event/presentation/event_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
 import 'styles/app_theme.dart';
+import 'shared/connection_status_bubble.dart';
 
 class App extends StatelessWidget {
   App({super.key, required this.initialLocation});
@@ -80,6 +81,12 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: AppTheme.light,
       routerConfig: _router,
+      builder: (context, child) => Stack(
+        children: [
+          if (child != null) child,
+          const ConnectionStatusBubble(),
+        ],
+      ),
     );
   }
 }

@@ -16,6 +16,10 @@ class ChatSocketService {
   static final ChatSocketService instance = ChatSocketService._();
 
   StompClient? _client;
+  Timer? _reconnectTimer;
+  int _reconnectSeconds = 0;
+  bool _manualDisconnect = false;
+  final ValueNotifier<String?> statusNotifier = ValueNotifier(null);
   final Map<int, StreamController<ChatMessage>> _chatControllers = {};
   final Map<int, ChatMessage> _latestMessages = {};
   final Map<int, String> _chatTitles = {};
@@ -63,6 +67,9 @@ class ChatSocketService {
 
   Future<void> connect() async {
     if (_client != null) return;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    statusNotifier.value = 'Connecting...';
     final jwt = await HttpClient.instance.getJwt();
     if (jwt == null) return;
     final url = '${apiBaseUrl.replaceFirst('http', 'ws')}/ws-chat';
@@ -72,7 +79,13 @@ class ChatSocketService {
         url: url,
         webSocketConnectHeaders: headers,
         stompConnectHeaders: headers,
-        onConnect: _onConnect,
+        onConnect: (frame) {
+          statusNotifier.value = null;
+          _onConnect(frame);
+        },
+        onWebSocketError: (_) => _scheduleReconnect(),
+        onStompError: (_) => _scheduleReconnect(),
+        onDisconnect: (_) => _scheduleReconnect(),
       ),
     );
     _client!.activate();
@@ -153,6 +166,10 @@ class ChatSocketService {
   }
 
   void disconnect() {
+    _manualDisconnect = true;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    statusNotifier.value = null;
     _client?.deactivate();
     _client = null;
     for (final c in _chatControllers.values) {
@@ -161,6 +178,27 @@ class ChatSocketService {
     _chatControllers.clear();
     _latestMessages.clear();
     _pendingMessages.clear();
+  }
+
+  void _scheduleReconnect() {
+    if (_manualDisconnect) {
+      _manualDisconnect = false;
+      return;
+    }
+    if (_reconnectTimer?.isActive ?? false) return;
+    _client = null;
+    _reconnectSeconds = 20;
+    statusNotifier.value = 'Reconnecting in $_reconnectSeconds s';
+    _reconnectTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _reconnectSeconds--;
+      if (_reconnectSeconds <= 0) {
+        timer.cancel();
+        _reconnectTimer = null;
+        connect();
+      } else {
+        statusNotifier.value = 'Reconnecting in $_reconnectSeconds s';
+      }
+    });
   }
 
   Future<void> _showNotification(ChatMessageResponse msg) async {
