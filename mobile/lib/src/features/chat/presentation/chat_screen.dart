@@ -58,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'unreadCount': 0,
       }),
     );
+    ChatSocketService.instance.updateChatTitle(widget.chatId, _chat!.title);
     final userRes = await UserService.instance.getCurrentUser();
     _userId = CurrentUserResponse.fromJson(userRes.data).id;
     ChatSocketService.instance.setCurrentUserId(_userId!);
