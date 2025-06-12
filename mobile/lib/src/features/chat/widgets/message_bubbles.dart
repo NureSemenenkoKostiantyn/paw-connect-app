@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../models/chat_message_response.dart';
+import '../../../models/chat_message.dart';
+import '../../../services/chat_socket_service.dart';
 
 class MessageBubble extends StatelessWidget {
-  final ChatMessageResponse message;
+  final ChatMessage message;
   final bool isMe;
   const MessageBubble({super.key, required this.message, required this.isMe});
 
@@ -48,7 +49,37 @@ class MessageBubble extends StatelessWidget {
                           ?.copyWith(color: textColor)),
                   if (isMe) ...[
                     const SizedBox(width: 4),
-                    Icon(Icons.check, size: 12, color: textColor),
+                    if (message.status == ChatMessageStatus.sending)
+                      SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(textColor),
+                        ),
+                      )
+                    else if (message.status == ChatMessageStatus.sent)
+                      Icon(Icons.check, size: 12, color: textColor)
+                    else
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error,
+                            size: 12,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          GestureDetector(
+                            onTap: () => ChatSocketService.instance
+                                .sendMessage(message.chatId, message.content),
+                            child: Icon(
+                              Icons.refresh,
+                              size: 12,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                        ],
+                      ),
                   ]
                 ],
               )

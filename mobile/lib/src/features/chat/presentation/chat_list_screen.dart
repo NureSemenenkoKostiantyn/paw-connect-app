@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/chat_response.dart';
-import '../../../models/chat_message_response.dart';
+import '../../../models/chat_message.dart';
 import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
 import '../../../shared/main_app_bar.dart';
@@ -46,7 +46,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
   }
 
-  String _formatTimestamp(ChatMessageResponse? message) {
+  String _formatTimestamp(dynamic message) {
     if (message == null) return '';
     try {
       final date = DateTime.parse(message.timestamp).toLocal();
