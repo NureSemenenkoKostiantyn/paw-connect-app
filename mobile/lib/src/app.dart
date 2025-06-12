@@ -8,6 +8,8 @@ import 'features/chat/presentation/chat_list_screen.dart';
 import 'features/chat/presentation/chat_screen.dart';
 import 'features/profile/profile_completion_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
+import 'features/profile/presentation/public_profile_screen.dart';
+import 'features/event/presentation/event_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
 import 'styles/app_theme.dart';
 
@@ -45,6 +47,22 @@ class App extends StatelessWidget {
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           return DogProfileScreen(dogId: id);
+        },
+      ),
+      GoRoute(
+        path: '/public/:username',
+        name: 'public-profile',
+        builder: (context, state) {
+          final username = state.pathParameters['username']!;
+          return PublicProfileScreen(username: username);
+        },
+      ),
+      GoRoute(
+        path: '/events/:id',
+        name: 'event',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return EventScreen(eventId: id);
         },
       ),
       GoRoute(

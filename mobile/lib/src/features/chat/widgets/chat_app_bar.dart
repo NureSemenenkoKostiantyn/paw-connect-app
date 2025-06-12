@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../models/chat_response.dart';
 
@@ -8,25 +9,11 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void _openPlaceholder(BuildContext context) {
     if (chat.type.toUpperCase() == 'GROUP') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            appBar: AppBar(title: Text('Event')),
-            body: Center(child: Text('Event screen placeholder')),
-          ),
-        ),
-      );
+      if (chat.eventId != null) {
+        context.push('/events/${chat.eventId}');
+      }
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            appBar: AppBar(title: Text('Public Profile')),
-            body: Center(child: Text('Public profile placeholder')),
-          ),
-        ),
-      );
+      context.push('/public/${chat.title}');
     }
   }
 
