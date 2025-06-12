@@ -22,7 +22,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
-    ChatSocketService.instance.initNotifications();
+    ChatSocketService.instance.initNotifications(context);
     ChatSocketService.instance.connect();
     _loadChats();
     ChatSocketService.instance.messages.listen((msg) {
@@ -38,6 +38,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ..clear()
         ..addAll((res.data as List<dynamic>)
             .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>)));
+      ChatSocketService.instance.updateChatTitles(_chats);
       for (final chat in _chats) {
         ChatSocketService.instance.subscribe(chat.id);
       }

@@ -5,7 +5,10 @@ import '../env.dart';
 import 'http_client.dart';
 import '../models/chat_message_response.dart';
 import '../models/chat_message.dart';
+import '../models/chat_response.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatSocketService {
   ChatSocketService._();
@@ -15,6 +18,7 @@ class ChatSocketService {
   StompClient? _client;
   final Map<int, StreamController<ChatMessage>> _chatControllers = {};
   final Map<int, ChatMessage> _latestMessages = {};
+  final Map<int, String> _chatTitles = {};
   int? _activeChatId;
   int? _currentUserId;
   final _messageStream = StreamController<ChatMessage>.broadcast();
@@ -25,11 +29,27 @@ class ChatSocketService {
   Map<int, ChatMessage> get latestMessages => _latestMessages;
   final Map<int, List<ChatMessage>> _pendingMessages = {};
 
-  Future<void> initNotifications() async {
+  void updateChatTitles(Iterable<ChatResponse> chats) {
+    for (final chat in chats) {
+      _chatTitles[chat.id] = chat.title;
+    }
+  }
+
+  void updateChatTitle(int chatId, String title) {
+    _chatTitles[chatId] = title;
+  }
+
+  Future<void> initNotifications(BuildContext context) async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings();
     await _notifications.initialize(
       const InitializationSettings(android: android, iOS: ios),
+      onDidReceiveNotificationResponse: (response) {
+        final id = int.tryParse(response.payload ?? '');
+        if (id != null) {
+          GoRouter.of(context).push('/chats/$id');
+        }
+      },
     );
   }
 
@@ -151,11 +171,13 @@ class ChatSocketService {
       priority: Priority.defaultPriority,
     );
     const details = NotificationDetails(android: androidDetails);
+    final title = _chatTitles[msg.chatId] ?? 'New message';
     await _notifications.show(
       msg.chatId.hashCode,
-      'New message',
+      title,
       msg.content,
       details,
+      payload: msg.chatId.toString(),
     );
   }
 }
