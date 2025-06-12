@@ -291,27 +291,32 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
           : Stepper(
         currentStep: _step,
         onStepContinue: () {
+          final hasDogStep = !_hasDog;
           if (_step == 0) {
             if (_validateProfileStep()) {
               setState(() => _step += 1);
             }
-          } else if (_step == 1) {
+          } else if (_step == 1 && hasDogStep) {
             if (_validatePreferencesStep()) {
               setState(() => _step += 1);
             }
           } else {
-            if (_validateDogStep()) {
-              _submit();
+            if (hasDogStep) {
+              if (_validateDogStep()) _submit();
+            } else {
+              if (_validatePreferencesStep()) _submit();
             }
           }
         },
         onStepCancel: _step > 0 ? () => setState(() => _step -= 1) : null,
         controlsBuilder: (context, details) {
+          final hasDogStep = !_hasDog;
+          final lastStep = hasDogStep ? 2 : 1;
           return Row(
             children: [
               ElevatedButton(
                 onPressed: _loading ? null : details.onStepContinue,
-                child: _step == 2 ? const Text('Finish') : const Text('Next'),
+                child: _step == lastStep ? const Text('Finish') : const Text('Next'),
               ),
               if (_step > 0)
                 TextButton(
@@ -452,86 +457,88 @@ class _ProfileCompletionScreenState extends State<ProfileCompletionScreen> {
               ],
             ),
           ),
-          Step(
-            title: const Text('Your Dog'),
-            content: Column(
-              children: [
-                TextField(
-                  controller: dogNameController,
-                  decoration:
-                      InputDecoration(labelText: 'Name', errorText: _dogNameError),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: dogBreedController,
-                  decoration: InputDecoration(
-                      labelText: 'Breed', errorText: _dogBreedError),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: dogBirthdateController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      labelText: 'Birthdate', errorText: _dogBirthdateError),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now().subtract(const Duration(days: 365 * 2)),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      dogBirthdateController.text = date.toIso8601String().split('T').first;
-                    }
-                  },
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: dogSize,
-                  items: const [
-                    DropdownMenuItem(value: 'SMALL', child: Text('Small')),
-                    DropdownMenuItem(value: 'MEDIUM', child: Text('Medium')),
-                    DropdownMenuItem(value: 'LARGE', child: Text('Large')),
-                  ],
-                  onChanged: (v) => setState(() => dogSize = v),
-                  decoration:
-                      InputDecoration(labelText: 'Size', errorText: _dogSizeError),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: dogGender,
-                  items: const [
-                    DropdownMenuItem(value: 'MALE', child: Text('Male')),
-                    DropdownMenuItem(value: 'FEMALE', child: Text('Female')),
-                  ],
-                  onChanged: (v) => setState(() => dogGender = v),
-                  decoration:
-                      InputDecoration(labelText: 'Gender', errorText: _dogGenderError),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: dogPersonality,
-                  items: const [
-                    DropdownMenuItem(value: 'CALM', child: Text('Calm')),
-                    DropdownMenuItem(value: 'PLAYFUL', child: Text('Playful')),
-                  ],
-                  onChanged: (v) => setState(() => dogPersonality = v),
-                  decoration: InputDecoration(
-                      labelText: 'Personality', errorText: _dogPersonalityError),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: dogActivity,
-                  items: const [
-                    DropdownMenuItem(value: 'LOW', child: Text('Low')),
-                    DropdownMenuItem(value: 'MEDIUM', child: Text('Medium')),
-                    DropdownMenuItem(value: 'HIGH', child: Text('High')),
-                  ],
-                  onChanged: (v) => setState(() => dogActivity = v),
-                  decoration: InputDecoration(
-                      labelText: 'Activity Level', errorText: _dogActivityError),
-                ),
-              ],
+          if (!_hasDog)
+            Step(
+              title: const Text('Your Dog'),
+              content: Column(
+                children: [
+                  TextField(
+                    controller: dogNameController,
+                    decoration:
+                        InputDecoration(labelText: 'Name', errorText: _dogNameError),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: dogBreedController,
+                    decoration: InputDecoration(
+                        labelText: 'Breed', errorText: _dogBreedError),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: dogBirthdateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        labelText: 'Birthdate', errorText: _dogBirthdateError),
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now().subtract(const Duration(days: 365 * 2)),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      if (date != null) {
+                        dogBirthdateController.text = date.toIso8601String().split('T').first;
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: dogSize,
+                    items: const [
+                      DropdownMenuItem(value: 'SMALL', child: Text('Small')),
+                      DropdownMenuItem(value: 'MEDIUM', child: Text('Medium')),
+                      DropdownMenuItem(value: 'LARGE', child: Text('Large')),
+                    ],
+                    onChanged: (v) => setState(() => dogSize = v),
+                    decoration:
+                        InputDecoration(labelText: 'Size', errorText: _dogSizeError),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: dogGender,
+                    items: const [
+                      DropdownMenuItem(value: 'MALE', child: Text('Male')),
+                      DropdownMenuItem(value: 'FEMALE', child: Text('Female')),
+                    ],
+                    onChanged: (v) => setState(() => dogGender = v),
+                    decoration:
+                        InputDecoration(labelText: 'Gender', errorText: _dogGenderError),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: dogPersonality,
+                    items: const [
+                      DropdownMenuItem(value: 'CALM', child: Text('Calm')),
+                      DropdownMenuItem(value: 'PLAYFUL', child: Text('Playful')),
+                    ],
+                    onChanged: (v) => setState(() => dogPersonality = v),
+                    decoration: InputDecoration(
+                        labelText: 'Personality', errorText: _dogPersonalityError),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: dogActivity,
+                    items: const [
+                      DropdownMenuItem(value: 'LOW', child: Text('Low')),
+                      DropdownMenuItem(value: 'MEDIUM', child: Text('Medium')),
+                      DropdownMenuItem(value: 'HIGH', child: Text('High')),
+                    ],
+                    onChanged: (v) => setState(() => dogActivity = v),
+                    decoration: InputDecoration(
+                        labelText: 'Activity Level', errorText: _dogActivityError),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
