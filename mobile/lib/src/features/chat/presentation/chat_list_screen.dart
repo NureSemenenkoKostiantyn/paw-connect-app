@@ -80,7 +80,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemBuilder: (context, index) {
           final chat = _chats[index];
-          final latest = ChatSocketService.instance.latestMessages[chat.id] ??
+          final dynamic latest = ChatSocketService.instance
+                  .latestMessages[chat.id] ??
               chat.lastMessage;
           return InkWell(
             onTap: () => context.push('/chats/${chat.id}'),
