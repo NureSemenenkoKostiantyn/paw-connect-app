@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -38,6 +39,11 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ChatSocketService.instance.connect();
+      ChatSocketService.instance.subscribe(widget.chatId);
+      ChatSocketService.instance.setActiveChat(widget.chatId);
+    });
     _positions.itemPositions.addListener(_updateFloatingDate);
   }
 
@@ -64,9 +70,6 @@ class _ChatScreenState extends State<ChatScreen> {
     ChatSocketService.instance.setCurrentUserId(_userId!);
     await _loadMessages();
     if (mounted) setState(() {});
-    ChatSocketService.instance.connect();
-    ChatSocketService.instance.subscribe(widget.chatId);
-    ChatSocketService.instance.setActiveChat(widget.chatId);
     ChatSocketService.instance.messagesForChat(widget.chatId).listen((msg) {
       setState(() => _messages.add(msg));
       _scrollController.scrollTo(
