@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../services/http_client.dart';
+import '../services/chat_socket_service.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({super.key});
@@ -27,6 +28,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     if (confirmed == true) {
       await HttpClient.instance.clearCookies();
+      ChatSocketService.instance.disconnect();
       if (context.mounted) context.go('/');
     }
   }
