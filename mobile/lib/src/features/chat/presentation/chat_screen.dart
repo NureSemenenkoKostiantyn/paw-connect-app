@@ -8,7 +8,9 @@ import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
 import '../../../services/user_service.dart';
 import '../../../shared/main_app_bar.dart';
+import '../../../models/chat_response.dart';
 import '../widgets/message_bubbles.dart';
+import '../widgets/chat_app_bar.dart';
 
 class ChatScreen extends StatefulWidget {
   final int chatId;
@@ -30,6 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _hasMore = true;
   final TextEditingController _controller = TextEditingController();
   int? _userId;
+  ChatResponse? _chat;
 
   @override
   void initState() {
@@ -39,9 +42,26 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _init() async {
+    final chatsRes = await ChatService.instance.getChats();
+    final chats = (chatsRes.data as List<dynamic>)
+        .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>))
+        .toList();
+    _chat = chats.firstWhere(
+      (c) => c.id == widget.chatId,
+      orElse: () => ChatResponse.fromJson({
+        'id': widget.chatId,
+        'type': 'PRIVATE',
+        'title': 'Chat ${widget.chatId}',
+        'eventId': null,
+        'participantIds': [],
+        'lastMessage': null,
+        'unreadCount': 0,
+      }),
+    );
     final userRes = await UserService.instance.getCurrentUser();
     _userId = CurrentUserResponse.fromJson(userRes.data).id;
     await _loadMessages();
+    if (mounted) setState(() {});
     ChatSocketService.instance.connect();
     ChatSocketService.instance.subscribe(widget.chatId);
     ChatSocketService.instance.setActiveChat(widget.chatId);
@@ -140,7 +160,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
+      appBar: _chat != null
+          ? ChatAppBar(chat: _chat!)
+          : const MainAppBar(),
       body: Stack(
         children: [
           Column(
