@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../models/chat_response.dart';
 import '../../../models/chat_message_response.dart';
 import '../../../services/chat_service.dart';
+import '../../../services/chat_socket_service.dart';
 import '../../../shared/main_app_bar.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -21,7 +22,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
+    ChatSocketService.instance.initNotifications();
+    ChatSocketService.instance.connect();
     _loadChats();
+    ChatSocketService.instance.messages.listen((msg) {
+      if (mounted) setState(() {});
+    });
   }
 
   Future<void> _loadChats() async {
@@ -32,6 +38,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ..clear()
         ..addAll((res.data as List<dynamic>)
             .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>)));
+      for (final chat in _chats) {
+        ChatSocketService.instance.subscribe(chat.id);
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -70,6 +79,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemBuilder: (context, index) {
           final chat = _chats[index];
+          final latest = ChatSocketService.instance.latestMessages[chat.id] ??
+              chat.lastMessage;
           return InkWell(
             onTap: () => context.push('/chats/${chat.id}'),
             child: Padding(
@@ -95,7 +106,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          chat.lastMessage?.content ?? 'No messages yet',
+                          latest?.content ?? 'No messages yet',
                           style: Theme.of(context).textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -108,7 +119,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        _formatTimestamp(chat.lastMessage),
+                        _formatTimestamp(latest),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 4),

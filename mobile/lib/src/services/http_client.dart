@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -33,6 +35,15 @@ Future<bool> hasAuthCookie() async {
 
   Future<void> clearCookies() async {
     await _cookieJar.deleteAll();
+  }
+
+  Future<String?> getJwt() async {
+    final cookies =
+        await _cookieJar.loadForRequest(Uri.parse('$apiBaseUrl/api'));
+    for (final cookie in cookies) {
+      if (cookie.name == jwtCookieName) return cookie.value;
+    }
+    return null;
   }
 }
 
