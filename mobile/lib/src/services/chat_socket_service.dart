@@ -4,6 +4,7 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../env.dart';
 import 'http_client.dart';
 import '../models/chat_message_response.dart';
+import '../models/chat_message.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ChatSocketService {
@@ -12,15 +13,17 @@ class ChatSocketService {
   static final ChatSocketService instance = ChatSocketService._();
 
   StompClient? _client;
-  final Map<int, StreamController<ChatMessageResponse>> _chatControllers = {};
-  final Map<int, ChatMessageResponse> _latestMessages = {};
+  final Map<int, StreamController<ChatMessage>> _chatControllers = {};
+  final Map<int, ChatMessage> _latestMessages = {};
   int? _activeChatId;
-  final _messageStream = StreamController<ChatMessageResponse>.broadcast();
+  int? _currentUserId;
+  final _messageStream = StreamController<ChatMessage>.broadcast();
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
-  Stream<ChatMessageResponse> get messages => _messageStream.stream;
-  Map<int, ChatMessageResponse> get latestMessages => _latestMessages;
+  Stream<ChatMessage> get messages => _messageStream.stream;
+  Map<int, ChatMessage> get latestMessages => _latestMessages;
+  final Map<int, List<ChatMessage>> _pendingMessages = {};
 
   Future<void> initNotifications() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -32,6 +35,10 @@ class ChatSocketService {
 
   void setActiveChat(int? chatId) {
     _activeChatId = chatId;
+  }
+
+  void setCurrentUserId(int id) {
+    _currentUserId = id;
   }
 
   Future<void> connect() async {
@@ -64,9 +71,10 @@ class ChatSocketService {
     }
   }
 
-  Stream<ChatMessageResponse> messagesForChat(int chatId) {
-    return _chatControllers.putIfAbsent(
-        chatId, () => StreamController.broadcast()).stream;
+  Stream<ChatMessage> messagesForChat(int chatId) {
+    return _chatControllers
+        .putIfAbsent(chatId, () => StreamController.broadcast())
+        .stream;
   }
 
   void _subscribeChat(int chatId) {
@@ -75,13 +83,23 @@ class ChatSocketService {
       callback: (frame) {
         final body = frame.body;
         if (body == null) return;
-        final msg =
+        final res =
             ChatMessageResponse.fromJson(_decode(body) as Map<String, dynamic>);
+        final msg = ChatMessage.fromJson(res.toJson())
+          ..status = ChatMessageStatus.sent;
         _latestMessages[msg.chatId] = msg;
-        _messageStream.add(msg);
-        _chatControllers[chatId]?.add(msg);
-        if (_activeChatId != msg.chatId) {
-          _showNotification(msg);
+        if (res.senderId == _currentUserId &&
+            _pendingMessages[chatId]?.isNotEmpty == true) {
+          final pending = _pendingMessages[chatId]!.removeAt(0);
+          pending.status = ChatMessageStatus.sent;
+          _messageStream.add(pending);
+          _chatControllers[chatId]?.add(pending);
+        } else {
+          _messageStream.add(msg);
+          _chatControllers[chatId]?.add(msg);
+          if (_activeChatId != msg.chatId) {
+            _showNotification(res);
+          }
         }
       },
     );
@@ -92,10 +110,26 @@ class ChatSocketService {
   }
 
   void sendMessage(int chatId, String content) {
-    _client?.send(
-      destination: '/app/chat.send',
-      body: jsonEncode({'chatId': chatId, 'content': content}),
+    if (_currentUserId == null) return;
+    final msg = ChatMessage(
+      chatId: chatId,
+      senderId: _currentUserId!,
+      content: content,
+      timestamp: DateTime.now().toUtc().toIso8601String(),
+      status: _client != null && _client!.connected
+          ? ChatMessageStatus.sending
+          : ChatMessageStatus.error,
     );
+    _latestMessages[chatId] = msg;
+    _messageStream.add(msg);
+    _chatControllers[chatId]?.add(msg);
+    if (msg.status == ChatMessageStatus.sending) {
+      _pendingMessages.putIfAbsent(chatId, () => []).add(msg);
+      _client?.send(
+        destination: '/app/chat.send',
+        body: jsonEncode({'chatId': chatId, 'content': content}),
+      );
+    }
   }
 
   void disconnect() {
@@ -106,6 +140,7 @@ class ChatSocketService {
     }
     _chatControllers.clear();
     _latestMessages.clear();
+    _pendingMessages.clear();
   }
 
   Future<void> _showNotification(ChatMessageResponse msg) async {

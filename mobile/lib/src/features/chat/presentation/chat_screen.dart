@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import '../../../models/chat_message_response.dart';
+import '../../../models/chat_message.dart';
 import '../../../models/current_user_response.dart';
 import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
@@ -22,7 +22,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final List<ChatMessageResponse> _messages = [];
+  final List<ChatMessage> _messages = [];
   final ItemScrollController _scrollController = ItemScrollController();
   final ItemPositionsListener _positions = ItemPositionsListener.create();
   final ValueNotifier<String?> _floatingDate = ValueNotifier(null);
@@ -60,6 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
     final userRes = await UserService.instance.getCurrentUser();
     _userId = CurrentUserResponse.fromJson(userRes.data).id;
+    ChatSocketService.instance.setCurrentUserId(_userId!);
     await _loadMessages();
     if (mounted) setState(() {});
     ChatSocketService.instance.connect();
@@ -87,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
       final res = await ChatService.instance
           .getMessages(widget.chatId, page: _page, limit: 20);
       final list = (res.data as List<dynamic>)
-          .map((e) => ChatMessageResponse.fromJson(e as Map<String, dynamic>))
+          .map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
           .toList();
       if (list.length < 20) _hasMore = false;
       _page++;
@@ -121,7 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
     String date;
     if (item is DateTime) {
       date = DateFormat.yMMMd().format(item);
-    } else if (item is ChatMessageResponse) {
+    } else if (item is ChatMessage) {
       final ts = DateTime.parse(item.timestamp).toLocal();
       date = DateFormat.yMMMd().format(ts);
     } else {
@@ -143,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     }
-    final msg = item as ChatMessageResponse;
+    final msg = item as ChatMessage;
     final isMe = _userId != null && msg.senderId == _userId;
     return isMe
         ? SentMessageBubble(message: msg)
@@ -153,7 +154,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-    ChatSocketService.instance.sendMessage(widget.chatId, text);
+    if (_userId != null) {
+      ChatSocketService.instance.sendMessage(widget.chatId, text);
+    }
     _controller.clear();
   }
 
