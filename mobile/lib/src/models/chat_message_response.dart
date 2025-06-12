@@ -11,4 +11,14 @@ class ChatMessageResponse {
         senderId = json['senderId'],
         content = json['content'],
         timestamp = json['timestamp'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'chatId': chatId,
+      'senderId': senderId,
+      'content': content,
+      'timestamp': timestamp,
+    };
+  }
 }
