@@ -7,6 +7,9 @@ import '../../../services/preference_service.dart';
 import '../../../services/completion_utils.dart';
 import '../../../models/current_user_response.dart';
 import '../../../models/preference_response.dart';
+import '../../../services/chat_service.dart';
+import '../../../services/chat_socket_service.dart';
+import '../../../models/chat_response.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,6 +29,16 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await AuthService.instance
           .signIn(_usernameController.text, _passwordController.text);
+
+      final chatsRes = await ChatService.instance.getChats();
+      final chats = (chatsRes.data as List<dynamic>)
+          .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>));
+      ChatSocketService.instance.updateChatTitles(chats);
+      ChatSocketService.instance.connect();
+      for (final chat in chats) {
+        ChatSocketService.instance.subscribe(chat.id);
+      }
+
       if (mounted) {
         final userRes = await UserService.instance.getCurrentUser();
         final prefRes = await PreferenceService.instance.getCurrent();
