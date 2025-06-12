@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../env.dart';
 import 'http_client.dart';
 import '../models/chat_message_response.dart';
@@ -40,7 +38,7 @@ class ChatSocketService {
     if (_client != null) return;
     final jwt = await HttpClient.instance.getJwt();
     if (jwt == null) return;
-    final url = apiBaseUrl.replaceFirst('http', 'ws') + '/ws-chat';
+    final url = '${apiBaseUrl.replaceFirst('http', 'ws')}/ws-chat';
     final headers = {'Cookie': '$jwtCookieName=$jwt'};
     _client = StompClient(
       config: StompConfig.sockJS(
@@ -115,7 +113,7 @@ class ChatSocketService {
       'chat_messages',
       'Chat Messages',
       importance: Importance.defaultImportance,
-      priority: Priority.default,
+      priority: Priority.defaultPriority,
     );
     const details = NotificationDetails(android: androidDetails);
     await _notifications.show(

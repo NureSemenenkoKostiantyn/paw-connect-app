@@ -13,7 +13,7 @@ class MessageBubble extends StatelessWidget {
     final time = DateTime.parse(message.timestamp).toLocal();
     final bg = isMe
         ? Theme.of(context).colorScheme.primaryContainer
-        : Theme.of(context).colorScheme.surfaceVariant;
+        : Theme.of(context).colorScheme.surfaceContainerHighest;
     final textColor = isMe
         ? Theme.of(context).colorScheme.onPrimaryContainer
         : Theme.of(context).colorScheme.onSurfaceVariant;
@@ -63,12 +63,12 @@ class MessageBubble extends StatelessWidget {
 }
 
 class SentMessageBubble extends MessageBubble {
-  const SentMessageBubble({super.key, required ChatMessageResponse message})
-      : super(message: message, isMe: true);
+  const SentMessageBubble({super.key, required super.message})
+      : super(isMe: true);
 }
 
 class ReceivedMessageBubble extends MessageBubble {
-  const ReceivedMessageBubble({super.key, required ChatMessageResponse message})
-      : super(message: message, isMe: false);
+  const ReceivedMessageBubble({super.key, required super.message})
+      : super(isMe: false);
 }
 
