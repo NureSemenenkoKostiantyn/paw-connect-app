@@ -17,7 +17,6 @@ class MessageBubble extends StatelessWidget {
     final textColor = isMe
         ? Theme.of(context).colorScheme.onPrimaryContainer
         : Theme.of(context).colorScheme.onSurfaceVariant;
-    final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     return Row(
       mainAxisAlignment:
           isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -35,7 +34,7 @@ class MessageBubble extends StatelessWidget {
             ),
           ),
           child: Column(
-            crossAxisAlignment: align,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(message.content, style: TextStyle(color: textColor)),
               const SizedBox(height: 4),
@@ -49,7 +48,6 @@ class MessageBubble extends StatelessWidget {
                           ?.copyWith(color: textColor)),
                   if (isMe) ...[
                     const SizedBox(width: 4),
-                    Icon(Icons.check, size: 12, color: textColor),
                     Icon(Icons.check, size: 12, color: textColor),
                   ]
                 ],

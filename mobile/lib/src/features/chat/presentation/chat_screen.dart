@@ -186,31 +186,31 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ],
           ),
-          Positioned(
-            top: 12,
-            left: 0,
-            right: 0,
-            child: ValueListenableBuilder<String?>(
-              valueListenable: _floatingDate,
-              builder: (context, value, _) {
-                if (value == null) return const SizedBox.shrink();
-                return Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      value,
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
+          // Positioned(
+          //   top: 12,
+          //   left: 0,
+          //   right: 0,
+          //   child: ValueListenableBuilder<String?>(
+          //     valueListenable: _floatingDate,
+          //     builder: (context, value, _) {
+          //       if (value == null) return const SizedBox.shrink();
+          //       return Center(
+          //         child: Container(
+          //           padding: const EdgeInsets.symmetric(
+          //               horizontal: 12, vertical: 4),
+          //           decoration: BoxDecoration(
+          //             color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          //             borderRadius: BorderRadius.circular(8),
+          //           ),
+          //           child: Text(
+          //             value,
+          //             style: Theme.of(context).textTheme.labelSmall,
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // )
         ],
       ),
     );
