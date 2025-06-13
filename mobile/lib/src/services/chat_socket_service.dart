@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../env.dart';
 import 'http_client.dart';
 import '../models/chat_message_response.dart';
@@ -16,9 +17,7 @@ class ChatSocketService {
   static final ChatSocketService instance = ChatSocketService._();
 
   StompClient? _client;
-  Timer? _reconnectTimer;
-  int _reconnectSeconds = 0;
-  bool _manualDisconnect = false;
+  StreamSubscription<ConnectivityResult>? _connSub;
   final ValueNotifier<String?> statusNotifier = ValueNotifier(null);
   final Map<int, StreamController<ChatMessage>> _chatControllers = {};
   final Map<int, ChatMessage> _latestMessages = {};
@@ -65,10 +64,27 @@ class ChatSocketService {
     _currentUserId = id;
   }
 
+  Future<void> init() async {
+    _connSub = Connectivity().onConnectivityChanged.listen((result) {
+      if (result != ConnectivityResult.none) {
+        if (_client == null) {
+          connect();
+        }
+      } else {
+        statusNotifier.value = 'Offline';
+      }
+    });
+  }
+
+  void dispose() {
+    _connSub?.cancel();
+    _connSub = null;
+    _messageStream.close();
+    disconnect();
+  }
+
   Future<void> connect() async {
     if (_client != null) return;
-    _reconnectTimer?.cancel();
-    _reconnectTimer = null;
     statusNotifier.value = 'Connecting...';
     final jwt = await HttpClient.instance.getJwt();
     if (jwt == null) return;
@@ -83,9 +99,20 @@ class ChatSocketService {
           statusNotifier.value = null;
           _onConnect(frame);
         },
-        onWebSocketError: (_) => _scheduleReconnect(),
-        onStompError: (_) => _scheduleReconnect(),
-        onDisconnect: (_) => _scheduleReconnect(),
+        onWebSocketError: (error) {
+          print('WebSocket error: $error');
+          statusNotifier.value = 'Reconnecting...';
+        },
+        onStompError: (frame) {
+          print('STOMP error: ${frame.body}');
+          statusNotifier.value = 'Reconnecting...';
+        },
+        onDisconnect: (_) {
+          statusNotifier.value = 'Reconnecting...';
+        },
+        heartbeatIncoming: const Duration(seconds: 10),
+        heartbeatOutgoing: const Duration(seconds: 10),
+        reconnectDelay: const Duration(seconds: 5),
       ),
     );
     _client!.activate();
@@ -166,9 +193,6 @@ class ChatSocketService {
   }
 
   void disconnect() {
-    _manualDisconnect = true;
-    _reconnectTimer?.cancel();
-    _reconnectTimer = null;
     statusNotifier.value = null;
     _client?.deactivate();
     _client = null;
@@ -180,26 +204,6 @@ class ChatSocketService {
     _pendingMessages.clear();
   }
 
-  void _scheduleReconnect() {
-    if (_manualDisconnect) {
-      _manualDisconnect = false;
-      return;
-    }
-    if (_reconnectTimer?.isActive ?? false) return;
-    _client = null;
-    _reconnectSeconds = 20;
-    statusNotifier.value = 'Reconnecting in $_reconnectSeconds s';
-    _reconnectTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _reconnectSeconds--;
-      if (_reconnectSeconds <= 0) {
-        timer.cancel();
-        _reconnectTimer = null;
-        connect();
-      } else {
-        statusNotifier.value = 'Reconnecting in $_reconnectSeconds s';
-      }
-    });
-  }
 
   Future<void> _showNotification(ChatMessageResponse msg) async {
     const androidDetails = AndroidNotificationDetails(
