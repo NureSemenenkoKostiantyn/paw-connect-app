@@ -7,6 +7,7 @@ import 'src/models/chat_response.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ChatSocketService.instance.init();
   await HttpClient.instance.init();
   final hasCookie = await HttpClient.instance.hasAuthCookie();
   if (hasCookie) {
