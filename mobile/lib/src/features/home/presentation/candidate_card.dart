@@ -130,6 +130,7 @@ class _CandidateCardState extends State<CandidateCard> {
                 PageView(
                   controller: _pageController,
                   onPageChanged: (i) => setState(() => _pageIndex = i),
+                  physics: const NeverScrollableScrollPhysics(),
                   children: _slides.map((slide) {
                     if (slide.imageUrl != null) {
                       return CachedNetworkImage(
