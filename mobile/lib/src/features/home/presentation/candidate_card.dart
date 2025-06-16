@@ -1,68 +1,275 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../models/candidate_user.dart';
 import '../../../models/dog_response.dart';
 
-class CandidateCard extends StatelessWidget {
+class CandidateCard extends StatefulWidget {
   final CandidateUser candidate;
-  final VoidCallback? onTap;
+  final CardSwiperController cardController;
 
-  const CandidateCard({super.key, required this.candidate, this.onTap});
+  const CandidateCard({
+    super.key,
+    required this.candidate,
+    required this.cardController,
+  });
+
+  @override
+  State<CandidateCard> createState() => _CandidateCardState();
+}
+
+class _CandidateCardState extends State<CandidateCard> {
+  late final PageController _pageController;
+  late final List<_Slide> _slides;
+  int _pageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _slides = _buildSlides();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  List<_Slide> _buildSlides() {
+    final List<_Slide> slides = [];
+    if (widget.candidate.profilePhotoUrl != null) {
+      slides.add(
+        _Slide(
+          imageUrl: widget.candidate.profilePhotoUrl!,
+          title: widget.candidate.username,
+          subtitle:
+              '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
+          isOwner: true,
+        ),
+      );
+    }
+
+    for (final DogResponse dog in widget.candidate.dogs) {
+      final url = dog.photoUrls.isNotEmpty ? dog.photoUrls.first : null;
+      slides.add(
+        _Slide(
+          imageUrl: url,
+          title: dog.name,
+          subtitle: dog.breed ?? '',
+          isOwner: false,
+          dogId: dog.id,
+        ),
+      );
+    }
+    if (slides.isEmpty) {
+      slides.add(
+        _Slide(
+          imageUrl: null,
+          title: widget.candidate.username,
+          subtitle:
+              '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
+          isOwner: true,
+        ),
+      );
+    }
+    return slides;
+  }
+
+  void _handleTap(TapUpDetails details, BoxConstraints constraints) {
+    final dx = details.localPosition.dx;
+    if (dx < constraints.maxWidth / 2) {
+      if (_pageIndex > 0) {
+        _pageController.previousPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    } else {
+      if (_pageIndex < _slides.length - 1) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+  }
+
+  void _openProfile() {
+    final slide = _slides[_pageIndex];
+    if (slide.isOwner) {
+      context.pushNamed('public-profile',
+          pathParameters: {'username': widget.candidate.username});
+    } else if (slide.dogId != null) {
+      context.pushNamed('dog-profile',
+          pathParameters: {'id': slide.dogId.toString()});
+    }
+  }
+
+  Widget _buildActionButton(IconData icon, VoidCallback onPressed) {
+    return FloatingActionButton.small(
+      heroTag: null,
+      onPressed: onPressed,
+      child: Icon(icon),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final DogResponse? dog =
-        candidate.dogs.isNotEmpty ? candidate.dogs.first : null;
-
     return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundImage: dog != null && dog.photoUrls.isNotEmpty
-                    ? NetworkImage(dog.photoUrls.first)
-                    : null,
-                child: dog == null || dog.photoUrls.isNotEmpty
-                    ? null
-                    : Text(dog.name.isNotEmpty ? dog.name[0] : '?'),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      candidate.username,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      '${candidate.distanceKm.toStringAsFixed(1)} km away',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    if (dog != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        dog.name,
-                        style: Theme.of(context).textTheme.bodySmall,
+      clipBehavior: Clip.antiAlias,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTapUp: (details) => _handleTap(details, constraints),
+            child: Stack(
+              children: [
+                PageView(
+                  controller: _pageController,
+                  onPageChanged: (i) => setState(() => _pageIndex = i),
+                  children: _slides.map((slide) {
+                    if (slide.imageUrl != null) {
+                      return Image.network(
+                        slide.imageUrl!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      );
+                    }
+                    return Container(
+                      color: Colors.black12,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.pets,
+                        size: 80,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      if (dog.breed != null)
-                        Text(
-                          dog.breed!,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                    ],
-                  ],
+                    );
+                  }).toList(),
                 ),
-              ),
-              const Icon(Icons.chevron_right),
-            ],
-          ),
-        ),
+                Positioned(
+                  top: 8,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(_slides.length, (index) {
+                      final active = index == _pageIndex;
+                      return Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: active
+                              ? Colors.white
+                              : Colors.white54,
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black54, Colors.transparent],
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _slides[_pageIndex].title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (_slides[_pageIndex].subtitle.isNotEmpty)
+                          Text(
+                            _slides[_pageIndex].subtitle,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 90,
+                  right: 16,
+                  child: FloatingActionButton(
+                    mini: true,
+                    onPressed: _openProfile,
+                    child: const Icon(Icons.info_outline),
+                  ),
+                ),
+                Positioned(
+                  bottom: 16,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildActionButton(
+                        Icons.replay,
+                        () => widget.cardController.undo(),
+                      ),
+                      const SizedBox(width: 16),
+                      _buildActionButton(
+                        Icons.close,
+                        () => widget.cardController.swipe(
+                          CardSwiperDirection.left,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      _buildActionButton(
+                        Icons.favorite,
+                        () => widget.cardController.swipe(
+                          CardSwiperDirection.right,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      _buildActionButton(
+                        Icons.star,
+                        () => widget.cardController.swipe(
+                          CardSwiperDirection.top,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
+}
+
+class _Slide {
+  final String? imageUrl;
+  final String title;
+  final String subtitle;
+  final bool isOwner;
+  final int? dogId;
+
+  _Slide({
+    required this.imageUrl,
+    required this.title,
+    required this.subtitle,
+    required this.isOwner,
+    this.dogId,
+  });
 }

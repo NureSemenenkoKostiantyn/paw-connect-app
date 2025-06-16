@@ -70,7 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return true;
           },
           cardBuilder: (context, index, horizontalOffset, verticalOffset) {
-            return CandidateCard(candidate: _candidates[index]);
+            return CandidateCard(
+              candidate: _candidates[index],
+              cardController: _cardController,
+            );
           },
         ),
       );
