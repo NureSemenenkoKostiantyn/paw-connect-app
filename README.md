@@ -56,9 +56,7 @@
 
 ```
 /backend         # Spring Boot backend
-/mobile-app      # Flutter mobile app
-/web             # Optional frontend (Angular/React)
-/docs            # Docs, diagrams, API specs
+/mobile          # Flutter mobile app
 ```
 
 ---
