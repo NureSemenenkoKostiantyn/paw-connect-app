@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../models/candidate_user.dart';
 import '../../../models/dog_response.dart';
@@ -131,11 +132,23 @@ class _CandidateCardState extends State<CandidateCard> {
                   onPageChanged: (i) => setState(() => _pageIndex = i),
                   children: _slides.map((slide) {
                     if (slide.imageUrl != null) {
-                      return Image.network(
-                        slide.imageUrl!,
+                      return CachedNetworkImage(
+                        imageUrl: slide.imageUrl!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.black12,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.pets,
+                            size: 80,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                       );
                     }
                     return Container(
