@@ -185,9 +185,12 @@ class _CandidateCardState extends State<CandidateCard> {
                     }),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 80,
                   child: Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
