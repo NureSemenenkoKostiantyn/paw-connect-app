@@ -61,8 +61,7 @@ class _CandidateCardState extends State<CandidateCard> {
         _Slide(
           imageUrl: widget.candidate.profilePhotoUrl!,
           title: widget.candidate.username,
-          subtitle:
-              '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
+          subtitle: '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
           isOwner: true,
         ),
       );
@@ -86,8 +85,7 @@ class _CandidateCardState extends State<CandidateCard> {
         _Slide(
           imageUrl: null,
           title: widget.candidate.username,
-          subtitle:
-              '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
+          subtitle: '${widget.candidate.distanceKm.toStringAsFixed(1)} km away',
           isOwner: true,
         ),
       );
@@ -117,11 +115,15 @@ class _CandidateCardState extends State<CandidateCard> {
   void _openProfile() {
     final slide = _slides[_pageIndex];
     if (slide.isOwner) {
-      context.pushNamed('public-profile',
-          pathParameters: {'username': widget.candidate.username});
+      context.pushNamed(
+        'public-profile',
+        pathParameters: {'username': widget.candidate.username},
+      );
     } else if (slide.dogId != null) {
-      context.pushNamed('dog-profile',
-          pathParameters: {'id': slide.dogId.toString()});
+      context.pushNamed(
+        'dog-profile',
+        pathParameters: {'id': slide.dogId.toString()},
+      );
     }
   }
 
@@ -155,9 +157,8 @@ class _CandidateCardState extends State<CandidateCard> {
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) => Container(
                           color: Colors.black12,
                           alignment: Alignment.center,
@@ -194,9 +195,7 @@ class _CandidateCardState extends State<CandidateCard> {
                         margin: const EdgeInsets.symmetric(horizontal: 3),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: active
-                              ? Colors.white
-                              : Colors.white54,
+                          color: active ? Colors.white : Colors.white54,
                         ),
                       );
                     }),
@@ -205,7 +204,7 @@ class _CandidateCardState extends State<CandidateCard> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 80,
+                  bottom: 0,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -235,10 +234,39 @@ class _CandidateCardState extends State<CandidateCard> {
                               if (_slides[_pageIndex].subtitle.isNotEmpty)
                                 Text(
                                   _slides[_pageIndex].subtitle,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
+                              const SizedBox(height: 16),
+                              Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildActionButton(
+                              Icons.replay,
+                              () => widget.cardController.undo(),
+                            ),
+                            const SizedBox(width: 16),
+                            _buildActionButton(
+                              Icons.close,
+                              () => widget.cardController.swipe(
+                                CardSwiperDirection.left,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            _buildActionButton(
+                              Icons.favorite,
+                              () => widget.cardController.swipe(
+                                CardSwiperDirection.right,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            _buildActionButton(
+                              Icons.star,
+                              () => widget.cardController.swipe(
+                                CardSwiperDirection.top,
+                              ),
+                            ),
+                          ],
+                        ),
                             ],
                           ),
                         ),
@@ -248,51 +276,7 @@ class _CandidateCardState extends State<CandidateCard> {
                           onPressed: _openProfile,
                           child: const Icon(Icons.info_outline),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Colors.black54, Colors.transparent],
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildActionButton(
-                          Icons.replay,
-                          () => widget.cardController.undo(),
-                        ),
-                        const SizedBox(width: 16),
-                        _buildActionButton(
-                          Icons.close,
-                          () => widget.cardController.swipe(
-                            CardSwiperDirection.left,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        _buildActionButton(
-                          Icons.favorite,
-                          () => widget.cardController.swipe(
-                            CardSwiperDirection.right,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        _buildActionButton(
-                          Icons.star,
-                          () => widget.cardController.swipe(
-                            CardSwiperDirection.top,
-                          ),
-                        ),
+                        
                       ],
                     ),
                   ),
