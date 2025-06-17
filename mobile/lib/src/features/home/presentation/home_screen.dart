@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body = LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
-          final height = width * 10 / 7;
+          final height = width * 11 / 7;
           return Column(
             children: [
               SizedBox(
