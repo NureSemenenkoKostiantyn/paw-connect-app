@@ -74,26 +74,36 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } else {
       body = Center(
-        child: CardSwiper(
-          controller: _cardController,
-          cardsCount: _candidates.length,
-          numberOfCardsDisplayed: 1,
-          onSwipe:
-              (int previousIndex, int? currentIndex, CardSwiperDirection direction) async {
-            if (direction == CardSwiperDirection.left) {
-              await _createSwipe(previousIndex, 'PASS');
-            } else if (direction == CardSwiperDirection.right) {
-              await _createSwipe(previousIndex, 'LIKE');
-            }
-            if (previousIndex == _candidates.length - 1) {
-              _loadCandidates();
-            }
-            return true;
-          },
-          cardBuilder: (context, index, horizontalOffset, verticalOffset) {
-            return CandidateCard(
-              candidate: _candidates[index],
-              cardController: _cardController,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final height = width * 10 / 7;
+            return SizedBox(
+              width: width,
+              height: height,
+              child: CardSwiper(
+                controller: _cardController,
+                cardsCount: _candidates.length,
+                numberOfCardsDisplayed: 1,
+                onSwipe: (int previousIndex, int? currentIndex,
+                    CardSwiperDirection direction) async {
+                  if (direction == CardSwiperDirection.left) {
+                    await _createSwipe(previousIndex, 'PASS');
+                  } else if (direction == CardSwiperDirection.right) {
+                    await _createSwipe(previousIndex, 'LIKE');
+                  }
+                  if (previousIndex == _candidates.length - 1) {
+                    _loadCandidates();
+                  }
+                  return true;
+                },
+                cardBuilder: (context, index, horizontalOffset, verticalOffset) {
+                  return CandidateCard(
+                    candidate: _candidates[index],
+                    cardController: _cardController,
+                  );
+                },
+              ),
             );
           },
         ),
