@@ -12,6 +12,7 @@ public class PublicUserResponse {
     private Long id;
     private String username;
     private String bio;
+    private Integer age;
     private UserGender gender;
     private String profilePhotoUrl;
     private Boolean locationVisible;
