@@ -137,14 +137,16 @@ class _CandidateCardState extends State<CandidateCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTapUp: (details) => _handleTap(details, constraints),
-            child: Stack(
+    return AspectRatio(
+      aspectRatio: 7 / 10,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapUp: (details) => _handleTap(details, constraints),
+              child: Stack(
               children: [
                 PageView(
                   controller: _pageController,
