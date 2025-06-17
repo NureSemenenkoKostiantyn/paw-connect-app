@@ -41,8 +41,10 @@ public class MatchService {
         User currentUser = userService.getCurrentUserEntity();
         Point loc = currentUser.getLocation();
 
+        double radiusM = radiusKm > 100 ? 50_000 * 1000.0 : radiusKm * 1000.0;
+
         List<RankedCandidateRow> rows = userRepository.findRankedCandidates(
-                currentUser.getId(), loc, radiusKm * 1000.0, limit);
+                currentUser.getId(), loc, radiusM, limit);
 
         // Load the User entities in batch so we can reuse the existing UserMapper
         List<Long> ids = rows.stream().map(RankedCandidateRow::getUser_id).toList();

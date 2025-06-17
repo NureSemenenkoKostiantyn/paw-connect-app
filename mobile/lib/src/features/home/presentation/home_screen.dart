@@ -3,6 +3,7 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../../models/candidate_user.dart';
 import '../../../services/match_service.dart';
+import '../../../services/settings_service.dart';
 import '../../../shared/main_app_bar.dart';
 import 'candidate_card.dart';
 
@@ -27,7 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadCandidates() async {
     setState(() => _loading = true);
     try {
-      final res = await MatchService.instance.getCandidates();
+      final res = await MatchService.instance
+          .getCandidates(radiusKm: SettingsService.instance.candidateDistanceKm);
       _candidates
         ..clear()
         ..addAll((res.data as List<dynamic>)
@@ -50,7 +52,26 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_loading) {
       body = const Center(child: CircularProgressIndicator());
     } else if (_candidates.isEmpty) {
-      body = const Center(child: Text('No candidates found'));
+      body = Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('No candidates found'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () async {
+                double newRadius =
+                    (SettingsService.instance.candidateDistanceKm + 5)
+                        .clamp(1, 101);
+                await SettingsService.instance
+                    .setCandidateDistanceKm(newRadius.toDouble());
+                _loadCandidates();
+              },
+              child: const Text('Increase search radius'),
+            ),
+          ],
+        ),
+      );
     } else {
       body = Center(
         child: CardSwiper(

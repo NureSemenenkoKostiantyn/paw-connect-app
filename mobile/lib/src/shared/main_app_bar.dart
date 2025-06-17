@@ -67,6 +67,12 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
+          tooltip: 'Settings',
+          splashRadius: 24,
+          onPressed: () => context.push('/settings'),
+          icon: const Icon(Icons.settings),
+        ),
+        IconButton(
           tooltip: 'Logout',
           splashRadius: 24,
           onPressed: () => _confirmLogout(context),
