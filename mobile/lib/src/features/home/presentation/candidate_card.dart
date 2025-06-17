@@ -154,7 +154,7 @@ class _CandidateCardState extends State<CandidateCard> {
                     if (slide.imageUrl != null) {
                       return CachedNetworkImage(
                         imageUrl: slide.imageUrl!,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         width: double.infinity,
                         height: double.infinity,
                         placeholder: (context, url) =>
