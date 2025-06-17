@@ -11,6 +11,7 @@ import 'features/profile/presentation/profile_screen.dart';
 import 'features/profile/presentation/public_profile_screen.dart';
 import 'features/event/presentation/event_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
+import 'features/settings/presentation/settings_screen.dart';
 import 'styles/app_theme.dart';
 
 class App extends StatelessWidget {
@@ -71,6 +72,10 @@ class App extends StatelessWidget {
           final id = int.parse(state.pathParameters['id']!);
           return ChatScreen(chatId: id);
         },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );
