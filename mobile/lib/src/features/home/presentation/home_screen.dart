@@ -39,11 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _createSwipe(int index, String decision) async {
-    if (index < 0 || index >= _candidates.length) return;
+  Future<bool> _createSwipe(int index, String decision) async {
+    if (index < 0 || index >= _candidates.length) return false;
     final candidate = _candidates[index];
-    await MatchService.instance
-        .createSwipe(targetUserId: candidate.id, decision: decision);
+    try {
+      await MatchService.instance
+          .createSwipe(targetUserId: candidate.id, decision: decision);
+      return true;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send swipe: $e')),
+        );
+      }
+      return false;
+    }
   }
 
   @override
@@ -86,17 +96,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _cardController,
                   cardsCount: _candidates.length,
                   numberOfCardsDisplayed: 1,
-                  onSwipe: (int previousIndex, int? currentIndex,
-                      CardSwiperDirection direction) async {
+                  onSwipe: (
+                    int previousIndex,
+                    int? currentIndex,
+                    CardSwiperDirection direction,
+                  ) async {
+                    bool success = false;
                     if (direction == CardSwiperDirection.left) {
-                      await _createSwipe(previousIndex, 'PASS');
+                      success = await _createSwipe(previousIndex, 'PASS');
                     } else if (direction == CardSwiperDirection.right) {
-                      await _createSwipe(previousIndex, 'LIKE');
+                      success = await _createSwipe(previousIndex, 'LIKE');
+                    } else if (direction == CardSwiperDirection.top) {
+                      success = await _createSwipe(previousIndex, 'SUPERLIKE');
+                    } else {
+                      success = true;
                     }
-                    if (previousIndex == _candidates.length - 1) {
+                    if (success && previousIndex == _candidates.length - 1) {
                       _loadCandidates();
                     }
-                    return true;
+                    return success;
                   },
                   cardBuilder:
                       (context, index, horizontalOffset, verticalOffset) {
