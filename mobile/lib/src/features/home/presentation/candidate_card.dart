@@ -127,13 +127,6 @@ class _CandidateCardState extends State<CandidateCard> {
     }
   }
 
-  Widget _buildActionButton(IconData icon, VoidCallback onPressed) {
-    return FloatingActionButton.small(
-      heroTag: null,
-      onPressed: onPressed,
-      child: Icon(icon),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,37 +231,6 @@ class _CandidateCardState extends State<CandidateCard> {
                                     _slides[_pageIndex].subtitle,
                                     style: const TextStyle(color: Colors.white),
                                   ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    _buildActionButton(
-                                      Icons.replay,
-                                      () => widget.cardController.undo(),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    _buildActionButton(
-                                      Icons.close,
-                                      () => widget.cardController.swipe(
-                                        CardSwiperDirection.left,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    _buildActionButton(
-                                      Icons.favorite,
-                                      () => widget.cardController.swipe(
-                                        CardSwiperDirection.right,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    _buildActionButton(
-                                      Icons.star,
-                                      () => widget.cardController.swipe(
-                                        CardSwiperDirection.top,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
