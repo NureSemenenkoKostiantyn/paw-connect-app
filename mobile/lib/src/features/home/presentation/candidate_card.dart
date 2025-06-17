@@ -25,6 +25,22 @@ class _CandidateCardState extends State<CandidateCard> {
   late final List<_Slide> _slides;
   int _pageIndex = 0;
 
+  int? _calculateAge(String? birthdate) {
+    if (birthdate == null) return null;
+    try {
+      final date = DateTime.parse(birthdate);
+      final now = DateTime.now();
+      int age = now.year - date.year;
+      if (now.month < date.month ||
+          (now.month == date.month && now.day < date.day)) {
+        age--;
+      }
+      return age;
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,10 +70,11 @@ class _CandidateCardState extends State<CandidateCard> {
 
     for (final DogResponse dog in widget.candidate.dogs) {
       final url = dog.photoUrls.isNotEmpty ? dog.photoUrls.first : null;
+      final age = _calculateAge(dog.birthdate);
       slides.add(
         _Slide(
           imageUrl: url,
-          title: dog.name,
+          title: age != null ? '${dog.name}, $age y.o.' : dog.name,
           subtitle: dog.breed ?? '',
           isOwner: false,
           dogId: dog.id,
@@ -199,71 +216,85 @@ class _CandidateCardState extends State<CandidateCard> {
                         colors: [Colors.black54, Colors.transparent],
                       ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _slides[_pageIndex].title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _slides[_pageIndex].title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (_slides[_pageIndex].subtitle.isNotEmpty)
+                                Text(
+                                  _slides[_pageIndex].subtitle,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                        if (_slides[_pageIndex].subtitle.isNotEmpty)
-                          Text(
-                            _slides[_pageIndex].subtitle,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
+                        const SizedBox(width: 8),
+                        FloatingActionButton(
+                          mini: true,
+                          onPressed: _openProfile,
+                          child: const Icon(Icons.info_outline),
+                        ),
                       ],
                     ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 90,
-                  right: 16,
-                  child: FloatingActionButton(
-                    mini: true,
-                    onPressed: _openProfile,
-                    child: const Icon(Icons.info_outline),
                   ),
                 ),
                 Positioned(
                   bottom: 16,
                   left: 0,
                   right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildActionButton(
-                        Icons.replay,
-                        () => widget.cardController.undo(),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black54, Colors.transparent],
                       ),
-                      const SizedBox(width: 16),
-                      _buildActionButton(
-                        Icons.close,
-                        () => widget.cardController.swipe(
-                          CardSwiperDirection.left,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildActionButton(
+                          Icons.replay,
+                          () => widget.cardController.undo(),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildActionButton(
-                        Icons.favorite,
-                        () => widget.cardController.swipe(
-                          CardSwiperDirection.right,
+                        const SizedBox(width: 16),
+                        _buildActionButton(
+                          Icons.close,
+                          () => widget.cardController.swipe(
+                            CardSwiperDirection.left,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildActionButton(
-                        Icons.star,
-                        () => widget.cardController.swipe(
-                          CardSwiperDirection.top,
+                        const SizedBox(width: 16),
+                        _buildActionButton(
+                          Icons.favorite,
+                          () => widget.cardController.swipe(
+                            CardSwiperDirection.right,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        _buildActionButton(
+                          Icons.star,
+                          () => widget.cardController.swipe(
+                            CardSwiperDirection.top,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

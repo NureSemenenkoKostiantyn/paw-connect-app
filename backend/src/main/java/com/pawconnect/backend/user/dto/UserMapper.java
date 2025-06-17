@@ -11,6 +11,8 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.locationtech.jts.geom.Point;
+import java.time.LocalDate;
+import java.time.Period;
 
 import java.util.List;
 import java.util.Set;
@@ -35,6 +37,7 @@ public abstract class UserMapper {
     @Mapping(target = "longitude", source = "location", qualifiedByName = "pointToLongitudeNullable")
     @Mapping(target = "languages", expression = "java(mapLanguages(user))")
     @Mapping(target = "dogs", expression = "java(mapDogs(user))")
+    @Mapping(target = "age", expression = "java(mapAge(user))")
     public abstract PublicUserResponse toPublicUserResponse(User user);
 
     @Mapping(target = "location", expression = "java(toPoint(request.getLongitude(), request.getLatitude()))")
@@ -93,5 +96,10 @@ public abstract class UserMapper {
         return user.getDogs().stream()
                 .map(dogMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    protected Integer mapAge(User user) {
+        LocalDate birthdate = user.getBirthdate();
+        return birthdate != null ? Period.between(birthdate, LocalDate.now()).getYears() : null;
     }
 }

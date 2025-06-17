@@ -76,6 +76,7 @@ class MatchServiceTest {
         pub.setId(2L);
         pub.setUsername("bob");
         pub.setBio("bio");
+        pub.setAge(0);
         pub.setGender(UserGender.MALE);
         pub.setProfilePhotoUrl("pic");
         pub.setLanguages(Set.of("en"));
