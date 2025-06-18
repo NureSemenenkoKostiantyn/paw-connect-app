@@ -119,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   cardBuilder:
                       (context, index, horizontalOffset, verticalOffset) {
                     return CandidateCard(
+                      key: ValueKey(_candidates[index].id),
                       candidate: _candidates[index],
                       cardController: _cardController,
                     );
