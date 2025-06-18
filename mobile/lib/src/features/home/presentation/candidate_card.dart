@@ -22,7 +22,7 @@ class CandidateCard extends StatefulWidget {
 
 class _CandidateCardState extends State<CandidateCard> {
   late final PageController _pageController;
-  late final List<_Slide> _slides;
+  late List<_Slide> _slides;
   int _pageIndex = 0;
 
   int? _calculateAge(String? birthdate) {
@@ -46,6 +46,18 @@ class _CandidateCardState extends State<CandidateCard> {
     super.initState();
     _pageController = PageController();
     _slides = _buildSlides();
+  }
+
+  @override
+  void didUpdateWidget(covariant CandidateCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.candidate.id != widget.candidate.id) {
+      setState(() {
+        _pageIndex = 0;
+        _slides = _buildSlides();
+        _pageController.jumpToPage(0);
+      });
+    }
   }
 
   @override
