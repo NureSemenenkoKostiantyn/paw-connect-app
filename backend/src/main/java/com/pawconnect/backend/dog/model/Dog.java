@@ -49,7 +49,7 @@ public class Dog {
     private String about;
 
     @ElementCollection
-    private List<String> photoUrls;
+    private List<String> photoBlobNames;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

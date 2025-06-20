@@ -7,6 +7,7 @@ import com.pawconnect.backend.dog.dto.DogCreateRequest;
 import com.pawconnect.backend.dog.dto.DogMapper;
 import com.pawconnect.backend.dog.dto.DogResponse;
 import com.pawconnect.backend.dog.dto.DogUpdateRequest;
+import com.pawconnect.backend.common.storage.BlobStorageService;
 import com.pawconnect.backend.dog.model.Dog;
 import com.pawconnect.backend.dog.repository.DogRepository;
 import com.pawconnect.backend.user.model.User;
@@ -20,12 +21,14 @@ public class DogService {
     private final DogRepository dogRepository;
     private final DogMapper dogMapper;
     private final UserService userService;
+    private final BlobStorageService blobStorageService;
 
     @Autowired
-    public DogService(DogRepository dogRepository, DogMapper dogMapper, UserService userService) {
+    public DogService(DogRepository dogRepository, DogMapper dogMapper, UserService userService, BlobStorageService blobStorageService) {
         this.dogRepository = dogRepository;
         this.dogMapper = dogMapper;
         this.userService = userService;
+        this.blobStorageService = blobStorageService;
     }
 
     public DogResponse createDog(DogCreateRequest request) {
@@ -63,6 +66,9 @@ public class DogService {
             throw new UnauthorizedAccessException("You are not the owner of this dog");
         }
 
+        if (dog.getPhotoBlobNames() != null) {
+            dog.getPhotoBlobNames().forEach(blobStorageService::delete);
+        }
         dogRepository.delete(dog);
     }
 }

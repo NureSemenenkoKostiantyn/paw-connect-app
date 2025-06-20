@@ -65,7 +65,7 @@ public class User {
 
     private Boolean locationVisible = true;
 
-    private String profilePhotoUrl;
+    private String profilePhotoBlobName;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
