@@ -10,6 +10,7 @@ import com.pawconnect.backend.user.model.Language;
 import com.pawconnect.backend.user.model.User;
 import com.pawconnect.backend.user.repository.LanguageRepository;
 import com.pawconnect.backend.user.repository.UserRepository;
+import com.pawconnect.backend.common.storage.BlobStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final LanguageRepository languageRepository;
+    private final BlobStorageService blobStorageService;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, LanguageRepository languageRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, LanguageRepository languageRepository, BlobStorageService blobStorageService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.languageRepository = languageRepository;
+        this.blobStorageService = blobStorageService;
     }
 
     public User getCurrentUserEntity() {
@@ -51,6 +54,16 @@ public class UserService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User not found");
         }
+        userRepository.findById(userId).ifPresent(u -> {
+            blobStorageService.delete(u.getProfilePhotoBlobName());
+            if (u.getDogs() != null) {
+                u.getDogs().forEach(dog -> {
+                    if (dog.getPhotoBlobNames() != null) {
+                        dog.getPhotoBlobNames().forEach(blobStorageService::delete);
+                    }
+                });
+            }
+        });
         userRepository.deleteById(userId);
     }
 
