@@ -11,7 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -34,3 +34,4 @@ logging:
     org.springframework: INFO
     org:
       flywaydb: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
