@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/dogs")
@@ -39,6 +41,19 @@ public class DogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDog(@PathVariable Long id) {
         dogService.deleteDog(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/photos")
+    public ResponseEntity<DogResponse> addPhoto(@PathVariable Long id,
+                                                @RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(dogService.addPhoto(id, file));
+    }
+
+    @DeleteMapping("/{id}/photos")
+    public ResponseEntity<Void> deletePhoto(@PathVariable Long id,
+                                            @RequestParam("name") String name) {
+        dogService.deletePhoto(id, name);
         return ResponseEntity.noContent().build();
     }
 }

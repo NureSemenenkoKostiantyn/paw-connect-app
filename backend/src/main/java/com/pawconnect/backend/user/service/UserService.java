@@ -14,9 +14,11 @@ import com.pawconnect.backend.user.repository.LanguageRepository;
 import com.pawconnect.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
+import java.io.IOException;
 
 @Service
 public class UserService {
@@ -79,6 +81,28 @@ public class UserService {
             });
         }
         userRepository.deleteById(userId);
+    }
+
+    public CurrentUserResponse uploadProfilePhoto(MultipartFile file) throws IOException {
+        User user = getCurrentUserEntity();
+        if (user.getProfilePhotoUrl() != null) {
+            blobStorageService.delete(user.getProfilePhotoUrl());
+        }
+        String blobName = blobStorageService.upload(file, "profiles");
+        user.setProfilePhotoUrl(blobName);
+        CurrentUserResponse resp = userMapper.toCurrentUserResponse(userRepository.save(user));
+        enrich(resp.getDogs());
+        resp.setProfilePhotoUrl(blobStorageService.generateReadSasUrl(blobName));
+        return resp;
+    }
+
+    public void deleteProfilePhoto() {
+        User user = getCurrentUserEntity();
+        if (user.getProfilePhotoUrl() != null) {
+            blobStorageService.delete(user.getProfilePhotoUrl());
+            user.setProfilePhotoUrl(null);
+            userRepository.save(user);
+        }
     }
 
     public CurrentUserResponse updateCurrentUserProfile(UserUpdateProfileRequest request) {

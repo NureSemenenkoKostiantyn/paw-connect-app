@@ -38,7 +38,7 @@ public class BlobStorageService {
         String blobName = folder + '/' + UUID.randomUUID() + '-' + file.getOriginalFilename();
         BlobClient blob = containerClient.getBlobClient(blobName);
         blob.upload(file.getInputStream(), file.getSize(), true);
-        return blob.getBlobUrl();
+        return blobName;
     }
 
     /** Generate a read-only SAS URL valid for a limited time. */
