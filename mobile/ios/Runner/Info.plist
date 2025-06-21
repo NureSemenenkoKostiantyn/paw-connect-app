@@ -51,5 +51,7 @@
         </array>
         <key>NSUserNotificationUsageDescription</key>
         <string>This app uses notifications to alert you of new messages.</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>This app needs access to your location to set your current position.</string>
 </dict>
 </plist>

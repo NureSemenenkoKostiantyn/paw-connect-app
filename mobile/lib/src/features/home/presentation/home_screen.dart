@@ -39,11 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _createSwipe(int index, String decision) async {
-    if (index < 0 || index >= _candidates.length) return;
+  Future<bool> _createSwipe(int index, String decision) async {
+    if (index < 0 || index >= _candidates.length) return false;
     final candidate = _candidates[index];
-    await MatchService.instance
-        .createSwipe(targetUserId: candidate.id, decision: decision);
+    try {
+      await MatchService.instance
+          .createSwipe(targetUserId: candidate.id, decision: decision);
+      return true;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send swipe: $e')),
+        );
+      }
+      return false;
+    }
   }
 
   @override
@@ -73,30 +83,85 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     } else {
-      body = Center(
-        child: CardSwiper(
-          controller: _cardController,
-          cardsCount: _candidates.length,
-          numberOfCardsDisplayed: 1,
-          onSwipe:
-              (int previousIndex, int? currentIndex, CardSwiperDirection direction) async {
-            if (direction == CardSwiperDirection.left) {
-              await _createSwipe(previousIndex, 'PASS');
-            } else if (direction == CardSwiperDirection.right) {
-              await _createSwipe(previousIndex, 'LIKE');
-            }
-            if (previousIndex == _candidates.length - 1) {
-              _loadCandidates();
-            }
-            return true;
-          },
-          cardBuilder: (context, index, horizontalOffset, verticalOffset) {
-            return CandidateCard(
-              candidate: _candidates[index],
-              cardController: _cardController,
-            );
-          },
-        ),
+      body = LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final height = width * 11 / 7;
+          return Column(
+            children: [
+              SizedBox(
+                width: width,
+                height: height,
+                child: CardSwiper(
+                  controller: _cardController,
+                  cardsCount: _candidates.length,
+                  numberOfCardsDisplayed: 1,
+                  onSwipe: (
+                    int previousIndex,
+                    int? currentIndex,
+                    CardSwiperDirection direction,
+                  ) async {
+                    bool success = false;
+                    if (direction == CardSwiperDirection.left) {
+                      success = await _createSwipe(previousIndex, 'PASS');
+                    } else if (direction == CardSwiperDirection.right) {
+                      success = await _createSwipe(previousIndex, 'LIKE');
+                    } else if (direction == CardSwiperDirection.top) {
+                      success = await _createSwipe(previousIndex, 'SUPERLIKE');
+                    } else {
+                      success = true;
+                    }
+                    if (success && previousIndex == _candidates.length - 1) {
+                      _loadCandidates();
+                    }
+                    return success;
+                  },
+                  cardBuilder:
+                      (context, index, horizontalOffset, verticalOffset) {
+                    return CandidateCard(
+                      key: ValueKey(_candidates[index].id),
+                      candidate: _candidates[index],
+                      cardController: _cardController,
+                    );
+                  },
+                ),
+              ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    onPressed: () => _cardController.undo(),
+                    child: const Icon(Icons.replay),
+                  ),
+                  const SizedBox(width: 16),
+                  FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () =>
+                        _cardController.swipe(CardSwiperDirection.left),
+                    child: const Icon(Icons.close),
+                  ),
+                  const SizedBox(width: 16),
+                  FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () =>
+                        _cardController.swipe(CardSwiperDirection.right),
+                    child: const Icon(Icons.favorite),
+                  ),
+                  const SizedBox(width: 16),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    onPressed: () =>
+                        _cardController.swipe(CardSwiperDirection.top),
+                    child: const Icon(Icons.star),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          );
+        },
       );
     }
 

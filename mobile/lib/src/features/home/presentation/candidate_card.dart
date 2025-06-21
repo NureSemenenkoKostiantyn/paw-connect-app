@@ -22,7 +22,7 @@ class CandidateCard extends StatefulWidget {
 
 class _CandidateCardState extends State<CandidateCard> {
   late final PageController _pageController;
-  late final List<_Slide> _slides;
+  late List<_Slide> _slides;
   int _pageIndex = 0;
 
   int? _calculateAge(String? birthdate) {
@@ -46,6 +46,18 @@ class _CandidateCardState extends State<CandidateCard> {
     super.initState();
     _pageController = PageController();
     _slides = _buildSlides();
+  }
+
+  @override
+  void didUpdateWidget(covariant CandidateCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.candidate.id != widget.candidate.id) {
+      setState(() {
+        _pageIndex = 0;
+        _slides = _buildSlides();
+        _pageController.jumpToPage(0);
+      });
+    }
   }
 
   @override
@@ -127,164 +139,128 @@ class _CandidateCardState extends State<CandidateCard> {
     }
   }
 
-  Widget _buildActionButton(IconData icon, VoidCallback onPressed) {
-    return FloatingActionButton.small(
-      heroTag: null,
-      onPressed: onPressed,
-      child: Icon(icon),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTapUp: (details) => _handleTap(details, constraints),
-            child: Stack(
-              children: [
-                PageView(
-                  controller: _pageController,
-                  onPageChanged: (i) => setState(() => _pageIndex = i),
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: _slides.map((slide) {
-                    if (slide.imageUrl != null) {
-                      return CachedNetworkImage(
-                        imageUrl: slide.imageUrl!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.black12,
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.pets,
-                            size: 80,
-                            color: Theme.of(context).colorScheme.primary,
+    return AspectRatio(
+      aspectRatio: 7 / 11,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapUp: (details) => _handleTap(details, constraints),
+              child: Stack(
+                children: [
+                  PageView(
+                    controller: _pageController,
+                    onPageChanged: (i) => setState(() => _pageIndex = i),
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: _slides.map((slide) {
+                      if (slide.imageUrl != null) {
+                        return CachedNetworkImage(
+                          imageUrl: slide.imageUrl!,
+                          fit: BoxFit.contain,
+                          width: double.infinity,
+                          height: double.infinity,
+                          placeholder: (context, url) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.black12,
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.pets,
+                              size: 80,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                    return Container(
-                      color: Colors.black12,
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.pets,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    );
-                  }).toList(),
-                ),
-                Positioned(
-                  top: 8,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(_slides.length, (index) {
-                      final active = index == _pageIndex;
+                        );
+                      }
                       return Container(
-                        width: 8,
-                        height: 8,
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: active ? Colors.white : Colors.white54,
+                        color: Colors.black12,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.pets,
+                          size: 80,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       );
-                    }),
+                    }).toList(),
                   ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Colors.black54, Colors.transparent],
+                  Positioned(
+                    top: 8,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(_slides.length, (index) {
+                        final active = index == _pageIndex;
+                        return Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: active ? Colors.white : Colors.white54,
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [Colors.black54, Colors.transparent],
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _slides[_pageIndex].title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (_slides[_pageIndex].subtitle.isNotEmpty)
+                                  Text(
+                                    _slides[_pageIndex].subtitle,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          FloatingActionButton(
+                            mini: true,
+                            onPressed: _openProfile,
+                            child: const Icon(Icons.info_outline),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _slides[_pageIndex].title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              if (_slides[_pageIndex].subtitle.isNotEmpty)
-                                Text(
-                                  _slides[_pageIndex].subtitle,
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              const SizedBox(height: 16),
-                              Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildActionButton(
-                              Icons.replay,
-                              () => widget.cardController.undo(),
-                            ),
-                            const SizedBox(width: 16),
-                            _buildActionButton(
-                              Icons.close,
-                              () => widget.cardController.swipe(
-                                CardSwiperDirection.left,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            _buildActionButton(
-                              Icons.favorite,
-                              () => widget.cardController.swipe(
-                                CardSwiperDirection.right,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            _buildActionButton(
-                              Icons.star,
-                              () => widget.cardController.swipe(
-                                CardSwiperDirection.top,
-                              ),
-                            ),
-                          ],
-                        ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        FloatingActionButton(
-                          mini: true,
-                          onPressed: _openProfile,
-                          child: const Icon(Icons.info_outline),
-                        ),
-                        
-                      ],
-                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
