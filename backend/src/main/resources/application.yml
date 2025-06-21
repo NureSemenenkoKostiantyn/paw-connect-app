@@ -29,6 +29,12 @@ jwt:
   expirationMs: 60000000
   cookieName: pawconnect-jwt
 
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+    container-name: user-images
+    sas-expiry-minutes: 60
+
 logging:
   level:
     org.springframework: INFO
