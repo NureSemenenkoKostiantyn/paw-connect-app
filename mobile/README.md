@@ -15,6 +15,7 @@ From the repository root:
 cd backend
 # using Docker
 docker-compose up
+# brings up PostgreSQL, Redis and optional PgAdmin services
 # or using Maven
 ./mvnw spring-boot:run
 ```
