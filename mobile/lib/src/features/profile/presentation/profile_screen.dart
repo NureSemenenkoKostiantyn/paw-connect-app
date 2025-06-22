@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() => _photoProcessing = true);
     try {
-      final res = await UserService.instance.uploadProfilePhoto(compressed);
+      final res = await UserService.instance.uploadProfilePhoto(File(compressed.path));
       _user = CurrentUserResponse.fromJson(res.data);
     } finally {
       if (mounted) setState(() => _photoProcessing = false);
