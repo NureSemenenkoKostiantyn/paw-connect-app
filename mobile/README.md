@@ -36,6 +36,9 @@ All HTTP requests go through a shared `Dio` client defined in
 `lib/src/services/http_client.dart`. The client stores cookies with a
 `CookieJar` and uses a `CookieManager` interceptor so that the JWT cookie
 received during sign‑in is automatically included in subsequent API calls.
+If any request returns a **401 Unauthorized** response the app clears stored
+cookies, disconnects active WebSocket sessions and navigates back to the login
+screen.
 
 Swipe-based matchmaking is powered by the [`flutter_card_swiper`](https://pub.dev/packages/flutter_card_swiper) package.
 
