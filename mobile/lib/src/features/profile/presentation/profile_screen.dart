@@ -94,6 +94,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _confirmDeletePhoto() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Photo'),
+        content: const Text('Are you sure you want to delete your profile photo?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deletePhoto();
+    }
+  }
+
   Widget _buildPhoto() {
     final url = _user!.profilePhotoUrl;
     Widget image = AspectRatio(
@@ -153,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.black45,
                   child: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.white),
-                    onPressed: _photoProcessing ? null : _deletePhoto,
+                    onPressed: _photoProcessing ? null : _confirmDeletePhoto,
                   ),
                 ),
               ),
