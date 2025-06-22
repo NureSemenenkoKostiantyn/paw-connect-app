@@ -7,6 +7,7 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +43,7 @@ public class BlobStorageService {
     }
 
     /** Generate a read-only SAS URL valid for a limited time. */
+    @Cacheable(value = "sasLinks", key = "#blobName")
     public String generateReadSasUrl(String blobName) {
         OffsetDateTime expiry = OffsetDateTime.now().plus(sasExpiry);
         BlobSasPermission perms = new BlobSasPermission().setReadPermission(true);

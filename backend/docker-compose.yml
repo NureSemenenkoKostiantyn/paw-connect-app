@@ -7,10 +7,13 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pawconnect
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
 
   db:
     image: postgis/postgis:17-3.5
@@ -36,6 +39,12 @@ services:
       - db
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
 
 volumes:
   pgdata:
