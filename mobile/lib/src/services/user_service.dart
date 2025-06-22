@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import 'http_client.dart';
@@ -14,5 +16,16 @@ class UserService {
 
   Future<Response<dynamic>> updateCurrentUser(Map<String, dynamic> data) {
     return _dio.put('/users/current', data: data);
+  }
+
+  Future<Response<dynamic>> uploadProfilePhoto(File file) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+    });
+    return _dio.post('/users/current/profile-photo', data: formData);
+  }
+
+  Future<Response<dynamic>> deleteProfilePhoto() {
+    return _dio.delete('/users/current/profile-photo');
   }
 }

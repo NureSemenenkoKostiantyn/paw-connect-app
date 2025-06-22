@@ -1,5 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../models/current_user_response.dart';
 import '../../../models/dog.dart';
 import '../../../services/user_service.dart';
@@ -16,6 +25,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   CurrentUserResponse? _user;
   bool _loading = true;
+  bool _photoProcessing = false;
 
   @override
   void initState() {
@@ -31,6 +41,154 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _changePhoto() async {
+    final theme = Theme.of(context);
+    
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: picked.path,
+      aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 3),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Photo',
+          toolbarColor: theme.colorScheme.primary,
+          toolbarWidgetColor: Colors.white,
+          hideBottomControls: true,
+          lockAspectRatio: true,
+          statusBarColor: theme.colorScheme.primary,
+        ),
+        IOSUiSettings(title: 'Crop Photo', aspectRatioLockEnabled: true),
+      ],
+    );
+    if (cropped == null) return;
+
+    final dir = await getTemporaryDirectory();
+    final target = p.join(dir.path, '${DateTime.now().millisecondsSinceEpoch}.webp');
+
+    final compressed = await FlutterImageCompress.compressAndGetFile(
+      cropped.path,
+      target,
+      minWidth: 720,
+      minHeight: 1080,
+      format: CompressFormat.webp,
+    );
+    if (compressed == null) return;
+
+    setState(() => _photoProcessing = true);
+    try {
+      final res = await UserService.instance.uploadProfilePhoto(File(compressed.path));
+      _user = CurrentUserResponse.fromJson(res.data);
+    } finally {
+      if (mounted) setState(() => _photoProcessing = false);
+    }
+  }
+
+  Future<void> _deletePhoto() async {
+    setState(() => _photoProcessing = true);
+    try {
+      await UserService.instance.deleteProfilePhoto();
+      await _loadUser();
+    } finally {
+      if (mounted) setState(() => _photoProcessing = false);
+    }
+  }
+
+  Future<void> _confirmDeletePhoto() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Photo'),
+        content: const Text('Are you sure you want to delete your profile photo?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deletePhoto();
+    }
+  }
+
+  Widget _buildPhoto() {
+    final url = _user!.profilePhotoUrl;
+    Widget image = AspectRatio(
+      aspectRatio: 2 / 3,
+      child: url != null
+          ? CachedNetworkImage(
+              imageUrl: url,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            )
+          : Container(
+              color: Colors.black12,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.person,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+    );
+    return Stack(
+      children: [
+        image,
+        if (_photoProcessing)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black45,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            ),
+          ),
+        Positioned(
+          bottom: 8,
+          left: 8,
+          child: Opacity(
+            opacity: 0.8,
+            child: ClipOval(
+              child: Container(
+                color: Colors.black45,
+                child: IconButton(
+                  icon: const Icon(Icons.photo_camera, color: Colors.white),
+                  onPressed: _photoProcessing ? null : _changePhoto,
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (url != null)
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: Opacity(
+              opacity: 0.8,
+              child: ClipOval(
+                child: Container(
+                  color: Colors.black45,
+                  child: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.white),
+                    onPressed: _photoProcessing ? null : _confirmDeletePhoto,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 
   @override
@@ -53,20 +211,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          Center(
-                            child: CircleAvatar(
-                              radius: 50,
-                              child: Text(
-                                _user!.username.isNotEmpty ? _user!.username[0].toUpperCase() : '?',
-                                style: TextStyle(fontSize: 40),
-                                ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
                           Text(
                             _user!.username,
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
+                          const SizedBox(height: 8),
+                          _buildPhoto(),
                           const SizedBox(height: 8),
                           Text('Email: ${_user!.email}'),
                           if (_user!.bio != null) ...[

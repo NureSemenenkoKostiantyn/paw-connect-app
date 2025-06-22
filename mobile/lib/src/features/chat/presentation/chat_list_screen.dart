@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/chat_response.dart';
-import '../../../models/chat_message.dart';
 import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
 import '../../../shared/main_app_bar.dart';
