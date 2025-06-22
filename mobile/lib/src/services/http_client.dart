@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../env.dart';
+import 'session_service.dart';
 
 class HttpClient {
   HttpClient._() {
@@ -25,6 +26,16 @@ class HttpClient {
     _cookieJar =
         PersistCookieJar(storage: FileStorage(p.join(dir.path, 'cookies')));
     _dio.interceptors.add(CookieManager(_cookieJar));
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException err, ErrorInterceptorHandler handler) async {
+          if (err.response?.statusCode == 401) {
+            await handleExpiredJwt();
+          }
+          handler.next(err);
+        },
+      ),
+    );
   }
 
 Future<bool> hasAuthCookie() async {

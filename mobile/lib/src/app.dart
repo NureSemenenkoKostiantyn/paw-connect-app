@@ -13,6 +13,7 @@ import 'features/event/presentation/event_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'styles/app_theme.dart';
+import 'services/session_service.dart';
 
 class App extends StatelessWidget {
   App({super.key, required this.initialLocation});
@@ -20,6 +21,7 @@ class App extends StatelessWidget {
   final String initialLocation;
 
   late final GoRouter _router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
     routes: [
       GoRoute(
@@ -85,6 +87,7 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: AppTheme.light,
       routerConfig: _router,
+      navigatorKey: rootNavigatorKey,
     );
   }
 }
