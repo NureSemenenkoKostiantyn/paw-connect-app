@@ -143,7 +143,7 @@ class _CandidateCardState extends State<CandidateCard> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 7 / 11,
+      aspectRatio: 2 / 3,
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: LayoutBuilder(

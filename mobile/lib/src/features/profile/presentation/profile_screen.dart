@@ -44,8 +44,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _changePhoto() async {
+    final theme = Theme.of(context);
+    
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked == null) return;
+
 
     final cropped = await ImageCropper().cropImage(
       sourcePath: picked.path,
@@ -53,10 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Crop Photo',
-          toolbarColor: Theme.of(context).colorScheme.primary,
+          toolbarColor: theme.colorScheme.primary,
           toolbarWidgetColor: Colors.white,
           hideBottomControls: true,
           lockAspectRatio: true,
+          statusBarColor: theme.colorScheme.primary,
         ),
         IOSUiSettings(title: 'Crop Photo', aspectRatioLockEnabled: true),
       ],
