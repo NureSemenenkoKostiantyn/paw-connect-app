@@ -24,31 +24,41 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signIn() async {
     setState(() => _loading = true);
     try {
-      await AuthService.instance
-          .signIn(_usernameController.text, _passwordController.text);
-      if (mounted) {
-        final userRes = await UserService.instance.getCurrentUser();
-        final prefRes = await PreferenceService.instance.getCurrent();
-        final user = CurrentUserResponse.fromJson(userRes.data);
-        final pref = PreferenceResponse.fromJson(prefRes.data);
-        if (isProfileComplete(user) && isPreferencesComplete(pref)) {
-          context.go('/home');
-        } else {
-          context.go('/profile/complete');
-        }
+      await AuthService.instance.signIn(
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      final userRes = await UserService.instance.getCurrentUser();
+      if (!mounted) return;
+
+      final prefRes = await PreferenceService.instance.getCurrent();
+      if (!mounted) return;
+
+      final user = CurrentUserResponse.fromJson(userRes.data);
+      final pref = PreferenceResponse.fromJson(prefRes.data);
+
+      if (!mounted) return;
+
+      if (isProfileComplete(user) && isPreferencesComplete(pref)) {
+        context.go('/home');
+      } else {
+        context.go('/profile/complete');
       }
     } on DioException catch (e) {
       final message = e.response?.data['message'] ?? e.message;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $message')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login failed: $message')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
       }
     } finally {
       if (mounted) {
@@ -82,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 labelText: 'Password',
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {

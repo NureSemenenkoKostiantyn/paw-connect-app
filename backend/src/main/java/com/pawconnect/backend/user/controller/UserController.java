@@ -7,6 +7,8 @@ import com.pawconnect.backend.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 
 @RestController
@@ -36,6 +38,17 @@ public class UserController {
     @DeleteMapping("/current")
     public ResponseEntity<Void> deleteCurrentUser() {
         userService.deleteCurrentUser();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/current/profile-photo")
+    public ResponseEntity<CurrentUserResponse> uploadProfilePhoto(@RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(userService.uploadProfilePhoto(file));
+    }
+
+    @DeleteMapping("/current/profile-photo")
+    public ResponseEntity<Void> deleteProfilePhoto() {
+        userService.deleteProfilePhoto();
         return ResponseEntity.noContent().build();
     }
 
