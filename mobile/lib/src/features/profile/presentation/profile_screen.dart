@@ -10,9 +10,8 @@ import 'package:path/path.dart' as p;
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../models/current_user_response.dart';
-import '../../../models/dog.dart';
+import '../../../models/dog_response.dart';
 import '../../../services/user_service.dart';
-import '../../dog/presentation/dog_card.dart';
 import '../../../shared/main_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   CurrentUserResponse? _user;
   bool _loading = true;
   bool _photoProcessing = false;
+  bool _showFullBio = false;
 
   @override
   void initState() {
@@ -122,6 +122,198 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  int? _calculateAge(String? birthdate) {
+    if (birthdate == null) return null;
+    try {
+      final date = DateTime.parse(birthdate);
+      final now = DateTime.now();
+      int age = now.year - date.year;
+      if (now.month < date.month ||
+          (now.month == date.month && now.day < date.day)) {
+        age--;
+      }
+      return age;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildUserInfo() {
+    final age = _calculateAge(_user!.birthdate);
+    final ageText = age != null ? ', $age' : '';
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Text(
+              '${_user!.username}$ageText',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          if (_user!.gender != null)
+            Row(
+              children: [
+                const Icon(Icons.person_outline, size: 20),
+                const SizedBox(width: 4),
+                Text(_user!.gender!),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBio() {
+    if (_user!.bio == null || _user!.bio!.isEmpty) return const SizedBox();
+    final bio = _user!.bio!;
+    final maxLines = _showFullBio ? null : 3;
+    final overflow = _showFullBio ? TextOverflow.visible : TextOverflow.ellipsis;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'About me',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            bio,
+            maxLines: maxLines,
+            overflow: overflow,
+          ),
+          if (bio.length > 120 && !_showFullBio)
+            TextButton(
+              onPressed: () => setState(() => _showFullBio = true),
+              child: const Text('Read more'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguages() {
+    if (_user!.languages.isEmpty) return const SizedBox();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Languages',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children:
+                _user!.languages.map((lang) => Chip(label: Text(lang))).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDogs() {
+    if (_user!.dogs.isEmpty) return const SizedBox();
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, top: 8, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Text(
+              'Dogs',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _user!.dogs.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final DogResponse dog =
+                    DogResponse.fromJson(_user!.dogs[index] as Map<String, dynamic>);
+                final age = _calculateAge(dog.birthdate);
+                return GestureDetector(
+                  onTap: () => context.pushNamed(
+                    'dog-profile',
+                    pathParameters: {'id': dog.id.toString()},
+                  ),
+                  child: SizedBox(
+                    width: 140,
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: dog.photoUrls.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: dog.photoUrls.first,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => Container(
+                                      color: Colors.black12,
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.pets,
+                                        size: 48,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    color: Colors.black12,
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.pets,
+                                      size: 48,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  age != null ? '${dog.name}, $age' : dog.name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                if (dog.breed != null)
+                                  Text(
+                                    dog.breed!,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildPhoto() {
     final url = _user!.profilePhotoUrl;
     Widget image = AspectRatio(
@@ -199,76 +391,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onRefresh: _loadUser,
         child: _loading
             ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: _user == null
-                    ? const Text('Failed to load profile')
-                    : Card(
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          Text(
-                            _user!.username,
-                            style: Theme.of(context).textTheme.headlineMedium,
+            : _user == null
+                ? const Center(child: Text('Failed to load profile'))
+                : SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildPhoto(),
+                        _buildUserInfo(),
+                        _buildBio(),
+                        _buildLanguages(),
+                        _buildDogs(),
+                        const SizedBox(height: 16),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () => context.push('/profile/complete'),
+                            child: const Text('Edit Profile'),
                           ),
-                          const SizedBox(height: 8),
-                          _buildPhoto(),
-                          const SizedBox(height: 8),
-                          Text('Email: ${_user!.email}'),
-                          if (_user!.bio != null) ...[
-                            const SizedBox(height: 8),
-                            Text('Bio: ${_user!.bio}'),
-                          ],
-                          if (_user!.birthdate != null) ...[
-                            const SizedBox(height: 8),
-                            Text('Birthdate: ${_user!.birthdate}'),
-                          ],
-                          if (_user!.gender != null) ...[
-                            const SizedBox(height: 8),
-                            Text('Gender: ${_user!.gender}'),
-                          ],
-                          const SizedBox(height: 8),
-                          Text('Location: ${_user!.latitude}, ${_user!.longitude}'),
-                          if (_user!.languages.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Text('Languages: ${_user!.languages.join(', ')}'),
-                          ],
-                          const SizedBox(height: 16),
-                          Text(
-                            'Dogs:',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          if (_user!.dogs.isEmpty)
-                            const Text('No dogs added')
-                          else
-                            Column(
-                              children: _user!.dogs.map<Widget>((data) {
-                                final dog = Dog.fromJson(data);
-                                return DogCard(
-                                  dog: dog,
-                                  onTap: () => context.pushNamed(
-                                    'dog-profile',
-                                    pathParameters: {'id': dog.id.toString()},
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          const SizedBox(height: 24),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () => context.push('/profile/complete'),
-                              child: const Text('Edit Profile'),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
-        ),
       ),
     );
   }
