@@ -15,9 +15,6 @@ public class PublicUserResponse {
     private Integer age;
     private UserGender gender;
     private String profilePhotoUrl;
-    private Boolean locationVisible;
-    private Double latitude;
-    private Double longitude;
     private Set<String> languages;
     private List<DogResponse> dogs;
 }
