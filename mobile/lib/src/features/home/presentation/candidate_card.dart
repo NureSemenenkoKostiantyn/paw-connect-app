@@ -129,7 +129,7 @@ class _CandidateCardState extends State<CandidateCard> {
     if (slide.isOwner) {
       context.pushNamed(
         'public-profile',
-        pathParameters: {'username': widget.candidate.username},
+        pathParameters: {'id': widget.candidate.id.toString()},
       );
     } else if (slide.dogId != null) {
       context.pushNamed(
@@ -160,7 +160,7 @@ class _CandidateCardState extends State<CandidateCard> {
                     children: _slides.map((slide) {
                       if (slide.imageUrl != null) {
                         final tag = slide.isOwner
-                            ? 'user-${widget.candidate.username}'
+                            ? 'user-${widget.candidate.id}'
                             : 'dog-${slide.dogId}';
                         return Hero(
                           tag: tag,

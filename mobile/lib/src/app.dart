@@ -53,11 +53,11 @@ class App extends StatelessWidget {
         },
       ),
       GoRoute(
-        path: '/public/:username',
+        path: '/public/:id',
         name: 'public-profile',
         builder: (context, state) {
-          final username = state.pathParameters['username']!;
-          return PublicProfileScreen(username: username);
+          final id = int.parse(state.pathParameters['id']!);
+          return PublicProfileScreen(userId: id);
         },
       ),
       GoRoute(

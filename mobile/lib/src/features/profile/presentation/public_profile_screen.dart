@@ -7,8 +7,8 @@ import '../../../models/dog_response.dart';
 import '../../../services/user_service.dart';
 
 class PublicProfileScreen extends StatefulWidget {
-  final String username;
-  const PublicProfileScreen({super.key, required this.username});
+  final int userId;
+  const PublicProfileScreen({super.key, required this.userId});
 
   @override
   State<PublicProfileScreen> createState() => _PublicProfileScreenState();
@@ -28,7 +28,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
   Future<void> _loadUser() async {
     setState(() => _loading = true);
     try {
-      final res = await UserService.instance.getPublicUser(widget.username);
+      final res = await UserService.instance.getPublicUser(widget.userId);
       _user = PublicUserResponse.fromJson(res.data);
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -244,7 +244,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                         expandedHeight: 400,
                         flexibleSpace: FlexibleSpaceBar(
                           background: Hero(
-                            tag: 'user-${_user!.username}',
+                            tag: 'user-${_user!.id}',
                             child: _user!.profilePhotoUrl != null
                                 ? CachedNetworkImage(
                                     imageUrl: _user!.profilePhotoUrl!,
