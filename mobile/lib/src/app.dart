@@ -87,7 +87,6 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: AppTheme.light,
       routerConfig: _router,
-      navigatorKey: rootNavigatorKey,
     );
   }
 }
