@@ -33,8 +33,6 @@ public abstract class UserMapper {
     @Mapping(target = "dogs", expression = "java(mapDogs(user))")
     public abstract CurrentUserResponse toCurrentUserResponse(User user);
 
-    @Mapping(target = "latitude", source = "location", qualifiedByName = "pointToLatitudeNullable")
-    @Mapping(target = "longitude", source = "location", qualifiedByName = "pointToLongitudeNullable")
     @Mapping(target = "languages", expression = "java(mapLanguages(user))")
     @Mapping(target = "dogs", expression = "java(mapDogs(user))")
     @Mapping(target = "age", expression = "java(mapAge(user))")
@@ -74,15 +72,6 @@ public abstract class UserMapper {
         return point != null ? point.getX() : 0.0;
     }
 
-    @Named("pointToLatitudeNullable")
-    protected Double mapLatitudeNullable(Point point) {
-        return point != null ? point.getY() : null;
-    }
-
-    @Named("pointToLongitudeNullable")
-    protected Double mapLongitudeNullable(Point point) {
-        return point != null ? point.getX() : null;
-    }
 
     protected Set<String> mapLanguages(User user) {
         if (user.getLanguages() == null) return Set.of();
