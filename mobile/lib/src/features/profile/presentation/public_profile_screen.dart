@@ -175,6 +175,21 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                 ? CachedNetworkImage(
                                     imageUrl: dog.photoUrls.first,
                                     fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      color: Colors.black12,
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.pets,
+                                        size: 48,
+                                        color:
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                      ),
+                                    ),
                                   )
                                 : Container(
                                     color: Colors.black12,
@@ -249,6 +264,18 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                 ? CachedNetworkImage(
                                     imageUrl: _user!.profilePhotoUrl!,
                                     fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => Container(
+                                      color: Colors.black12,
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 80,
+                                        color:
+                                            Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ),
                                   )
                                 : Container(
                                     color: Colors.black12,
