@@ -25,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   CurrentUserResponse? _user;
   bool _loading = true;
   bool _photoProcessing = false;
+  bool _pickingImage = false;
   bool _showFullBio = false;
 
   @override
@@ -44,10 +45,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _changePhoto() async {
+    if (_pickingImage) return;
     final theme = Theme.of(context);
-    
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
+    setState(() => _pickingImage = true);
+    try {
+      final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
 
 
     final cropped = await ImageCropper().cropImage(
@@ -85,6 +88,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _user = CurrentUserResponse.fromJson(res.data);
     } finally {
       if (mounted) setState(() => _photoProcessing = false);
+    }
+    } finally {
+      if (mounted) setState(() => _pickingImage = false);
     }
   }
 
@@ -356,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Colors.black45,
                 child: IconButton(
                   icon: const Icon(Icons.photo_camera, color: Colors.white),
-                  onPressed: _photoProcessing ? null : _changePhoto,
+                  onPressed: _photoProcessing || _pickingImage ? null : _changePhoto,
                 ),
               ),
             ),
