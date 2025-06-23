@@ -159,20 +159,26 @@ class _CandidateCardState extends State<CandidateCard> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: _slides.map((slide) {
                       if (slide.imageUrl != null) {
-                        return CachedNetworkImage(
-                          imageUrl: slide.imageUrl!,
-                          fit: BoxFit.contain,
-                          width: double.infinity,
-                          height: double.infinity,
-                          placeholder: (context, url) =>
-                              const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.black12,
-                            alignment: Alignment.center,
-                            child: Icon(
-                              Icons.pets,
-                              size: 80,
-                              color: Theme.of(context).colorScheme.primary,
+                        final tag = slide.isOwner
+                            ? 'user-${widget.candidate.username}'
+                            : 'dog-${slide.dogId}';
+                        return Hero(
+                          tag: tag,
+                          child: CachedNetworkImage(
+                            imageUrl: slide.imageUrl!,
+                            fit: BoxFit.contain,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.black12,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.pets,
+                                size: 80,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         );
