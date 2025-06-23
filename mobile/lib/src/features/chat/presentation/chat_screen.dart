@@ -32,6 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _hasMore = true;
   final TextEditingController _controller = TextEditingController();
   int? _userId;
+  int? _otherUserId;
   ChatResponse? _chat;
 
   @override
@@ -62,6 +63,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final userRes = await UserService.instance.getCurrentUser();
     _userId = CurrentUserResponse.fromJson(userRes.data).id;
     ChatSocketService.instance.setCurrentUserId(_userId!);
+    _otherUserId = _chat?.participantIds
+        .firstWhere((id) => id != _userId, orElse: () => -1);
+    if (_otherUserId == -1) _otherUserId = null;
     await _loadMessages();
     if (mounted) setState(() {});
     ChatSocketService.instance.connect();
@@ -165,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _chat != null
-          ? ChatAppBar(chat: _chat!)
+          ? ChatAppBar(chat: _chat!, otherUserId: _otherUserId)
           : const MainAppBar(),
       body: Stack(
         children: [

@@ -5,7 +5,8 @@ import '../../../models/chat_response.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ChatResponse chat;
-  const ChatAppBar({super.key, required this.chat});
+  final int? otherUserId;
+  const ChatAppBar({super.key, required this.chat, this.otherUserId});
 
   void _openPlaceholder(BuildContext context) {
     if (chat.type.toUpperCase() == 'GROUP') {
@@ -13,7 +14,9 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         context.push('/events/${chat.eventId}');
       }
     } else {
-      context.push('/public/${chat.title}');
+      if (otherUserId != null) {
+        context.push('/public/$otherUserId');
+      }
     }
   }
 
