@@ -28,4 +28,8 @@ class UserService {
   Future<Response<dynamic>> deleteProfilePhoto() {
     return _dio.delete('/users/current/profile-photo');
   }
+
+  Future<Response<dynamic>> getPublicUser(String username) {
+    return _dio.get('/users/public/$username');
+  }
 }
