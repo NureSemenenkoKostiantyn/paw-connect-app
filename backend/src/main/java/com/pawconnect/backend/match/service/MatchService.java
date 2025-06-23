@@ -6,6 +6,7 @@ import com.pawconnect.backend.match.dto.CandidateUserResponse;
 import com.pawconnect.backend.match.dto.RankedCandidateRow;
 import com.pawconnect.backend.match.dto.SwipeCreateRequest;
 import com.pawconnect.backend.chat.service.ChatService;
+import com.pawconnect.backend.common.BlobStorageService;
 import com.pawconnect.backend.match.model.Match;
 import com.pawconnect.backend.match.model.Swipe;
 import com.pawconnect.backend.match.repository.MatchRepository;
@@ -36,6 +37,7 @@ public class MatchService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final ChatService chatService;
+    private final BlobStorageService blobStorageService;
 
     public List<CandidateUserResponse> getCandidates(int limit, double radiusKm) {
         User currentUser = userService.getCurrentUserEntity();
@@ -58,6 +60,7 @@ public class MatchService {
 
     private CandidateUserResponse toDto(RankedCandidateRow row, User userEntity) {
         PublicUserResponse base = userMapper.toPublicUserResponse(userEntity);
+        enrichWithSas(base);
         return CandidateUserResponse.builder()
                 .id(base.getId())
                 .username(base.getUsername())
@@ -69,6 +72,22 @@ public class MatchService {
                 .distanceKm(row.getDistance_km())
                 .score(row.getScore())
                 .build();
+    }
+
+    private void enrichWithSas(PublicUserResponse base) {
+        if (base.getProfilePhotoUrl() != null) {
+            base.setProfilePhotoUrl(
+                    blobStorageService.generateReadSasUrl(base.getProfilePhotoUrl()));
+        }
+        if (base.getDogs() != null) {
+            base.getDogs().forEach(d -> {
+                if (d.getPhotoUrls() != null) {
+                    d.setPhotoUrls(d.getPhotoUrls().stream()
+                            .map(blobStorageService::generateReadSasUrl)
+                            .toList());
+                }
+            });
+        }
     }
 
     @Transactional
