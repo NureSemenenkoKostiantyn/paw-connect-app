@@ -12,13 +12,16 @@ import 'features/profile/presentation/public_profile_screen.dart';
 import 'features/event/presentation/event_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'styles/app_theme.dart';
 import 'services/session_service.dart';
+import 'localization/app_localizations.dart';
 
 class App extends StatelessWidget {
-  App({super.key, required this.initialLocation});
+  App({super.key, required this.initialLocation, required this.locale});
 
   final String initialLocation;
+  final Locale locale;
 
   late final GoRouter _router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -85,6 +88,14 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: AppTheme.light,
       routerConfig: _router,
     );

@@ -52,13 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Login failed: $message')));
+        ).showSnackBar(SnackBar(content: Text('${context.l10n.translate('loginFailed')}: $message')));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+        ).showSnackBar(SnackBar(content: Text('${context.l10n.translate('loginFailed')}: $e')));
       }
     } finally {
       if (mounted) {
@@ -70,26 +70,26 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PawConnect')),
+      appBar: AppBar(title: Text(context.l10n.translate('appTitle'))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome back',
+              context.l10n.translate('welcomeBack'),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 24),
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(labelText: context.l10n.translate('username')),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: context.l10n.translate('password'),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword ? Icons.visibility : Icons.visibility_off,
@@ -108,11 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: _loading ? null : _signIn,
               child: _loading
                   ? const CircularProgressIndicator()
-                  : const Text('Sign in'),
+                  : Text(context.l10n.translate('signIn')),
             ),
             TextButton(
               onPressed: () => context.push('/signup'),
-              child: const Text("Don't have an account? Sign up"),
+              child: Text("${context.l10n.translate('createAccount')}? ${context.l10n.translate('register')}"),
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import '../../localization/app_localizations.dart';
 
 import '../../../models/dog_response.dart';
 import '../../../services/dog_service.dart';
@@ -188,7 +189,7 @@ class _DogProfileScreenState extends State<DogProfileScreen> {
               children: [
                 const Icon(Icons.calendar_today, size: 20),
                 const SizedBox(width: 4),
-                Text('$age years old'),
+                Text('$age ${context.l10n.translate("yearsOld")}'),
               ],
             ),
           ],
@@ -209,7 +210,7 @@ class _DogProfileScreenState extends State<DogProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'About',
+            context.l10n.translate('about'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 4),
@@ -217,7 +218,7 @@ class _DogProfileScreenState extends State<DogProfileScreen> {
           if (showButton)
             TextButton(
               onPressed: () => setState(() => _showFullAbout = true),
-              child: const Text('Show more'),
+              child: Text(context.l10n.translate('showMore')),
             ),
         ],
       ),
@@ -235,7 +236,7 @@ class _DogProfileScreenState extends State<DogProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Traits',
+            context.l10n.translate('traits'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
@@ -258,9 +259,9 @@ class _DogProfileScreenState extends State<DogProfileScreen> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _notFound
-                ? const Center(child: Text('Dog not found'))
+                ? Center(child: Text(context.l10n.translate('dogNotFound')))
                 : _dog == null
-                    ? const Center(child: Text('Failed to load dog'))
+                    ? Center(child: Text(context.l10n.translate('failedToLoadDog')))
                     : CustomScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         slivers: [

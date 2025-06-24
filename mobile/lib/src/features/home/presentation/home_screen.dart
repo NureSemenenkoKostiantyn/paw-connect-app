@@ -5,6 +5,7 @@ import '../../../models/candidate_user.dart';
 import '../../../services/match_service.dart';
 import '../../../services/settings_service.dart';
 import '../../../shared/main_app_bar.dart';
+import '../../../localization/app_localizations.dart';
 import 'candidate_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send swipe: $e')),
+          SnackBar(content: Text('${context.l10n.translate('failedToSendSwipe')}: $e')),
         );
       }
       return false;
@@ -66,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('No candidates found'),
+            Text(context.l10n.translate('noCandidates')),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     .setCandidateDistanceKm(newRadius.toDouble());
                 _loadCandidates();
               },
-              child: const Text('Increase search radius'),
+              child: Text(context.l10n.translate('increaseRadius')),
             ),
           ],
         ),

@@ -8,5 +8,15 @@ void main() async {
   await HttpClient.instance.init();
   await SettingsService.instance.init();
   final hasCookie = await HttpClient.instance.hasAuthCookie();
-  runApp(App(initialLocation: hasCookie ? '/home' : '/'));
+  runApp(
+    AnimatedBuilder(
+      animation: SettingsService.instance,
+      builder: (context, _) {
+        return App(
+          initialLocation: hasCookie ? '/home' : '/',
+          locale: SettingsService.instance.locale,
+        );
+      },
+    ),
+  );
 }

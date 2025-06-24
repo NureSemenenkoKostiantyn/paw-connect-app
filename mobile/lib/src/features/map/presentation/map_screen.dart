@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
+import '../../../localization/app_localizations.dart';
 
 import '../../../env.dart';
 import '../../../models/event_response.dart';
@@ -86,7 +87,7 @@ class _MapScreenState extends State<MapScreen> {
                   context.pushNamed('event',
                       pathParameters: {'id': event.id.toString()});
                 },
-                child: const Text('View Details'),
+                child: Text(context.l10n.translate('viewDetails')),
               ),
             )
           ],
@@ -125,7 +126,7 @@ class _MapScreenState extends State<MapScreen> {
     if (_loading) {
       body = const Center(child: CircularProgressIndicator());
     } else if (_userLocation == null) {
-      body = const Center(child: Text('Location unavailable'));
+      body = Center(child: Text(context.l10n.translate('locationUnavailable')));
     } else {
       body = Stack(
         children: [
@@ -174,7 +175,7 @@ class _MapScreenState extends State<MapScreen> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Nearby Events')),
+      appBar: AppBar(title: Text(context.l10n.translate('nearbyEvents'))),
       body: body,
     );
   }
