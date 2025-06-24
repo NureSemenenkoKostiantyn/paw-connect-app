@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../services/http_client.dart';
 import '../services/chat_socket_service.dart';
+import '../localization/app_localizations.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({super.key});
@@ -11,16 +12,16 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(context.l10n.translate('confirmLogout')),
+        content: Text(context.l10n.translate('logoutPrompt')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Logout'),
+            child: Text(context.l10n.translate('logout')),
           ),
         ],
       ),
@@ -53,7 +54,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'PawConnect',
+                  context.l10n.translate('appTitle'),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,
@@ -67,13 +68,13 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          tooltip: 'Settings',
+          tooltip: context.l10n.translate('preferences'),
           splashRadius: 24,
           onPressed: () => context.push('/settings'),
           icon: const Icon(Icons.settings),
         ),
         IconButton(
-          tooltip: 'Logout',
+          tooltip: context.l10n.translate('logout'),
           splashRadius: 24,
           onPressed: () => _confirmLogout(context),
           icon: const Icon(Icons.logout),

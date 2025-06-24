@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'chat_socket_service.dart';
 import 'http_client.dart';
+import '../localization/app_localizations.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -12,7 +13,7 @@ Future<void> handleExpiredJwt() async {
   final context = rootNavigatorKey.currentContext;
   if (context != null) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Session expired. Please sign in again.')),
+      SnackBar(content: Text(AppLocalizations.of(context).translate('sessionExpired'))),
     );
     GoRouter.of(context).go('/');
   }

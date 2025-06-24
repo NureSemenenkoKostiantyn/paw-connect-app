@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import '../services/auth_service.dart';
+import '../../../localization/app_localizations.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -32,13 +33,13 @@ class _SignupScreenState extends State<SignupScreen> {
       final message = e.response?.data['message'] ?? e.message;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signup failed: $message')),
+          SnackBar(content: Text('${context.l10n.translate('signupFailed')}: $message')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signup failed: $e')),
+          SnackBar(content: Text('${context.l10n.translate('signupFailed')}: $e')),
         );
       }
     } finally {
@@ -51,31 +52,31 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: Text(context.l10n.translate('register'))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Create account',
+              context.l10n.translate('createAccount'),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 24),
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(labelText: context.l10n.translate('username')),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(labelText: context.l10n.translate('email')),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: context.l10n.translate('password'),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -96,7 +97,7 @@ class _SignupScreenState extends State<SignupScreen> {
               onPressed: _loading ? null : _register,
               child: _loading
                   ? const CircularProgressIndicator()
-                  : const Text('Register'),
+                  : Text(context.l10n.translate('register')),
             ),
           ],
         ),
