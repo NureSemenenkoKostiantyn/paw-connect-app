@@ -47,7 +47,6 @@ class _MapScreenState extends State<MapScreen> {
           latitude: pos.latitude,
           longitude: pos.longitude,
           radiusKm: 3.218688,
-          date: DateTime.now(),
         );
         _events
           ..clear()

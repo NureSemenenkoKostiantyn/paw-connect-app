@@ -23,6 +23,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,10 +50,10 @@ public class EventService {
     }
 
     public List<EventResponse> searchEvents(double latitude, double longitude,
-                                            double radiusKm,
-                                            LocalDateTime from, LocalDateTime to) {
+                                            double radiusKm) {
         Point loc = geometryFactory.createPoint(new Coordinate(longitude, latitude));
-        List<Event> events = eventRepository.searchEvents(loc, radiusKm * 1000.0, from, to);
+        LocalDateTime from = LocalDate.now().atStartOfDay();
+        List<Event> events = eventRepository.searchEvents(loc, radiusKm * 1000.0, from);
         return events.stream().map(eventMapper::toDto).toList();
     }
 
