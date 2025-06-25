@@ -27,4 +27,8 @@ class EventService {
   Future<Response<dynamic>> getEvent(int id) {
     return _dio.get('/events/$id');
   }
+
+  Future<Response<dynamic>> createEvent(Map<String, dynamic> data) {
+    return _dio.post('/events', data: data);
+  }
 }
