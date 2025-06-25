@@ -12,14 +12,11 @@ class EventService {
     required double latitude,
     required double longitude,
     required double radiusKm,
-    required DateTime date,
   }) {
-    final dateStr = date.toIso8601String().split('T').first;
     return _dio.get(
       '/events',
       queryParameters: {
         'near': '$latitude,$longitude,$radiusKm',
-        'date': dateStr,
       },
     );
   }
