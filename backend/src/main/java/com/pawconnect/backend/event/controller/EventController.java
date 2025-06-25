@@ -6,14 +6,10 @@ import com.pawconnect.backend.event.model.EventParticipantStatus;
 import com.pawconnect.backend.event.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -31,8 +27,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<EventResponse>> searchEvents(
-            @RequestParam("near") String near,
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam("near") String near) {
         String[] parts = near.split(",");
         if (parts.length != 3) {
             return ResponseEntity.badRequest().build();
@@ -41,9 +36,7 @@ public class EventController {
         double longitude = Double.parseDouble(parts[1]);
         double radius = Double.parseDouble(parts[2]);
 
-        LocalDateTime from = date.atStartOfDay();
-        LocalDateTime to = date.atTime(LocalTime.MAX);
-        List<EventResponse> events = eventService.searchEvents(latitude, longitude, radius, from, to);
+        List<EventResponse> events = eventService.searchEvents(latitude, longitude, radius);
         return ResponseEntity.ok(events);
     }
 
