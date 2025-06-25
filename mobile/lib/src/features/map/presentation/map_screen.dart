@@ -46,13 +46,17 @@ class _MapScreenState extends State<MapScreen> {
         final res = await EventService.instance.searchEvents(
           latitude: pos.latitude,
           longitude: pos.longitude,
+<<<<<<< codex/add-event-creation-screen
+          radiusKm: 13.218688,
+=======
           radiusKm: 3.218688,
+>>>>>>> main
         );
         _events
           ..clear()
           ..addAll(
             (res.data as List<dynamic>).map(
-              (e) => EventResponse.fromJson(e as Map<String, dynamic>),
+              (e) => EventResponse.fromJson(Map<String, dynamic>.from(e)),
             ),
           );
       }
@@ -158,6 +162,12 @@ class _MapScreenState extends State<MapScreen> {
                     'OpenStreetMap contributors',
                     onTap: () => launchUrl(
                       Uri.parse('https://openstreetmap.org/copyright'),
+                    ),
+                  ),
+                  TextSourceAttribution(
+                    'OpenStreetMap contributors | Fix the map',
+                    onTap: () => launchUrl(
+                      Uri.parse('https://www.openstreetmap.org/fixthemap'),
                     ),
                   ),
                 ],
