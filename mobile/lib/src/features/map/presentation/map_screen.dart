@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../env.dart';
 import '../../../models/event_response.dart';
@@ -50,8 +51,11 @@ class _MapScreenState extends State<MapScreen> {
         );
         _events
           ..clear()
-          ..addAll((res.data as List<dynamic>)
-              .map((e) => EventResponse.fromJson(e as Map<String, dynamic>)));
+          ..addAll(
+            (res.data as List<dynamic>).map(
+              (e) => EventResponse.fromJson(e as Map<String, dynamic>),
+            ),
+          );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -59,8 +63,11 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildInfoCard() {
-    final event =
-        _events.firstWhere((e) => e.id == _selectedId, orElse: () => _events[0]);
+    if (_events.isEmpty) return const SizedBox.shrink();
+    final event = _events.firstWhere(
+      (e) => e.id == _selectedId,
+      orElse: () => _events[0],
+    );
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -69,9 +76,12 @@ class _MapScreenState extends State<MapScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(event.title,
-                style:
-                    Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              event.title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
             Text(DateFormat('yMMMd – HH:mm').format(event.eventDateTime)),
             const SizedBox(height: 4),
@@ -83,12 +93,14 @@ class _MapScreenState extends State<MapScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  context.pushNamed('event',
-                      pathParameters: {'id': event.id.toString()});
+                  context.pushNamed(
+                    'event',
+                    pathParameters: {'id': event.id.toString()},
+                  );
                 },
                 child: const Text('View Details'),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -131,45 +143,32 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           FlutterMap(
             mapController: _mapController,
-            options: MapOptions(
-              center: _userLocation,
-              zoom: 15,
-            ),
+            options: MapOptions(initialCenter: _userLocation!, initialZoom: 15),
             children: [
               TileLayer(
                 urlTemplate: mapTileUrl,
                 userAgentPackageName: 'com.example.pawconnect',
-                tileProvider: NetworkTileProvider(headers: const {
-                  'User-Agent': 'PawConnectApp/1.0 (Android)',
-                }),
-                attributionBuilder: (_) => Text.rich(
-                  TextSpan(children: [
-                    const TextSpan(text: '© OpenStreetMap contributors  •  '),
-                    WidgetSpan(
-                      child: GestureDetector(
-                        onTap: () => launchUrl(
-                            Uri.parse('https://www.openstreetmap.org/fixthemap')),
-                        child: const Text(
-                          'Fix the map',
-                          style: TextStyle(decoration: TextDecoration.underline),
-                        ),
-                      ),
-                    ),
-                  ]),
-                  textAlign: TextAlign.right,
+                tileProvider: NetworkTileProvider(
+                  headers: const {'User-Agent': 'PawConnectApp/1.0 (Android)'},
                 ),
               ),
-              const LocationMarkerLayer(),
+              RichAttributionWidget(
+                attributions: [
+                  // Suggested attribution for the OpenStreetMap public tile server
+                  TextSourceAttribution(
+                    'OpenStreetMap contributors',
+                    onTap: () => launchUrl(
+                      Uri.parse('https://openstreetmap.org/copyright'),
+                    ),
+                  ),
+                ],
+              ),
+              const CurrentLocationLayer(),
               MarkerLayer(markers: _buildMarkers()),
             ],
           ),
           if (_selectedId != null)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _buildInfoCard(),
-            ),
+            Positioned(left: 0, right: 0, bottom: 0, child: _buildInfoCard()),
         ],
       );
     }
