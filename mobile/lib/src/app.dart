@@ -10,6 +10,7 @@ import 'features/profile/profile_completion_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
 import 'features/profile/presentation/public_profile_screen.dart';
 import 'features/event/presentation/event_screen.dart';
+import 'features/event/presentation/event_create_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'styles/app_theme.dart';
@@ -67,6 +68,11 @@ class App extends StatelessWidget {
           final id = int.parse(state.pathParameters['id']!);
           return EventScreen(eventId: id);
         },
+      ),
+      GoRoute(
+        path: '/events/create',
+        name: 'event-create',
+        builder: (context, state) => const EventCreateScreen(),
       ),
       GoRoute(
         path: '/chats/:id',

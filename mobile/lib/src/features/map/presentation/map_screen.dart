@@ -175,6 +175,10 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Nearby Events')),
       body: body,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.pushNamed('event-create'),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
