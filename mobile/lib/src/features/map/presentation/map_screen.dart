@@ -148,9 +148,9 @@ class _MapScreenState extends State<MapScreen> {
               TileLayer(
                 urlTemplate: mapTileUrl,
                 userAgentPackageName: 'com.example.pawconnect',
-                tileProvider: NetworkTileProvider(
-                  headers: const {'User-Agent': 'PawConnectApp/1.0 (Android)'},
-                ),
+                // tileProvider: NetworkTileProvider(
+                //   headers: const {'User-Agent': 'PawConnectApp/1.0 (Android)'},
+                // ),
               ),
               RichAttributionWidget(
                 attributions: [
