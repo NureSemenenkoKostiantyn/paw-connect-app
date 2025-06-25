@@ -62,6 +62,11 @@ class App extends StatelessWidget {
         },
       ),
       GoRoute(
+        path: '/events/create',
+        name: 'event-create',
+        builder: (context, state) => const EventCreateScreen(),
+      ),
+      GoRoute(
         path: '/events/:id',
         name: 'event',
         builder: (context, state) {
@@ -69,11 +74,7 @@ class App extends StatelessWidget {
           return EventScreen(eventId: id);
         },
       ),
-      GoRoute(
-        path: '/events/create',
-        name: 'event-create',
-        builder: (context, state) => const EventCreateScreen(),
-      ),
+      
       GoRoute(
         path: '/chats/:id',
         builder: (context, state) {
