@@ -14,9 +14,8 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT * FROM events e " +
             "WHERE ST_DWithin(e.location, :loc, :radiusM) " +
-            "AND e.event_date_time BETWEEN :from AND :to", nativeQuery = true)
+            "AND e.event_date_time >= :from", nativeQuery = true)
     List<Event> searchEvents(@Param("loc") Point loc,
                              @Param("radiusM") double radiusM,
-                             @Param("from") LocalDateTime from,
-                             @Param("to") LocalDateTime to);
+                             @Param("from") LocalDateTime from);
 }
