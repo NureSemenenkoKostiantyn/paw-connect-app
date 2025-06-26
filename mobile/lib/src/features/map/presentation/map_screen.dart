@@ -173,7 +173,7 @@ class _MapScreenState extends State<MapScreen> {
             ],
           ),
           if (_selectedId != null)
-            Positioned(left: 0, right: 0, bottom: 0, child: _buildInfoCard()),
+            Positioned(left: 0, right: 0, bottom: 70, child: _buildInfoCard()),
         ],
       );
     }
