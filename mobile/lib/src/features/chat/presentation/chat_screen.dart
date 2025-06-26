@@ -6,6 +6,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../models/chat_message.dart';
 import '../../../models/current_user_response.dart';
+import '../../../models/public_user_response.dart';
 import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
 import '../../../services/user_service.dart';
@@ -37,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
   int? _userId;
   int? _otherUserId;
   ChatResponse? _chat;
+  final Map<int, String> _usernames = {};
 
   @override
   void initState() {
@@ -69,6 +71,15 @@ class _ChatScreenState extends State<ChatScreen> {
     _otherUserId = _chat?.participantIds
         .firstWhere((id) => id != _userId, orElse: () => -1);
     if (_otherUserId == -1) _otherUserId = null;
+    if (_chat!.type.toUpperCase() == 'GROUP') {
+      for (final id in _chat!.participantIds) {
+        try {
+          final res = await UserService.instance.getPublicUser(id);
+          final user = PublicUserResponse.fromJson(res.data);
+          _usernames[id] = user.username;
+        } catch (_) {}
+      }
+    }
     await _loadMessages();
     if (mounted) setState(() {});
     ChatSocketService.instance.connect();
@@ -171,9 +182,14 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     final msg = item as ChatMessage;
     final isMe = _userId != null && msg.senderId == _userId;
-    return isMe
-        ? SentMessageBubble(message: msg)
-        : ReceivedMessageBubble(message: msg);
+    if (isMe) {
+      return SentMessageBubble(message: msg);
+    } else {
+      final username = _chat != null && _chat!.type.toUpperCase() == 'GROUP'
+          ? _usernames[msg.senderId]
+          : null;
+      return ReceivedMessageBubble(message: msg, username: username);
+    }
   }
 
   void _sendMessage() {
