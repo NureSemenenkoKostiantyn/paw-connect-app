@@ -43,6 +43,9 @@ public class MessageService {
                 .build();
         Message saved = messageRepository.save(message);
 
+        // Mark the message as read for the sender
+        chatParticipantRepository.updateLastReadMessage(chat.getId(), sender.getId(), saved);
+
         ChatMessageResponse res = new ChatMessageResponse();
         res.setId(saved.getId());
         res.setChatId(chat.getId());
