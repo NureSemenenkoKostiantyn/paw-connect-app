@@ -19,6 +19,7 @@ class ChatSocketService {
   final Map<int, StreamController<ChatMessage>> _chatControllers = {};
   final Map<int, ChatMessage> _latestMessages = {};
   final Map<int, String> _chatTitles = {};
+  final Set<int> _subscribedChats = {};
   int? _activeChatId;
   int? _currentUserId;
   final _messageStream = StreamController<ChatMessage>.broadcast();
@@ -97,6 +98,7 @@ onStompError: (frame) {
   
 
   void subscribe(int chatId) {
+    if (_subscribedChats.contains(chatId)) return;
     _chatControllers.putIfAbsent(chatId, () => StreamController.broadcast());
     if (_client != null && _client!.connected) {
       _subscribeChat(chatId);
@@ -110,7 +112,8 @@ onStompError: (frame) {
   }
 
   void _subscribeChat(int chatId) {
-    _client?.subscribe(
+    if (_subscribedChats.contains(chatId)) return;
+    final sub = _client?.subscribe(
       destination: '/topic/chats/$chatId',
       callback: (frame) {
         final body = frame.body;
@@ -135,6 +138,9 @@ onStompError: (frame) {
         }
       },
     );
+    if (sub != null) {
+      _subscribedChats.add(chatId);
+    }
   }
 
   dynamic _decode(String body) {
@@ -173,6 +179,7 @@ onStompError: (frame) {
     _chatControllers.clear();
     _latestMessages.clear();
     _pendingMessages.clear();
+    _subscribedChats.clear();
   }
 
   Future<void> _showNotification(ChatMessageResponse msg) async {
