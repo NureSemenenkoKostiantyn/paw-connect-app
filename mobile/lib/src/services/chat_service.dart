@@ -17,4 +17,8 @@ class ChatService {
     return _dio.get('/chats/$chatId/messages',
         queryParameters: {'page': page, 'limit': limit});
   }
+
+  Future<Response<dynamic>> markAsRead(int chatId, int messageId) {
+    return _dio.patch('/chats/$chatId/read/$messageId');
+  }
 }

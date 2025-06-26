@@ -88,4 +88,20 @@ public class MessageService {
                 })
                 .toList();
     }
+
+    public void markAsRead(Long chatId, Long messageId) {
+        User user = userService.getCurrentUserEntity();
+        if (!chatRepository.existsByIdAndParticipantsUserId(chatId, user.getId())) {
+            throw new UnauthorizedAccessException("You are not a participant of this chat");
+        }
+
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Message not found"));
+
+        if (!message.getChat().getId().equals(chatId)) {
+            throw new NotFoundException("Message not found in this chat");
+        }
+
+        chatParticipantRepository.updateLastReadMessage(chatId, user.getId(), message);
+    }
 }
