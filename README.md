@@ -64,7 +64,10 @@
 
 The backend exposes a STOMP endpoint at `/ws-chat`. The handshake requires a valid JWT,
 so include the token in the `Authorization` header (or cookie) when connecting
-with a WebSocket or SockJS client.
+with a WebSocket or SockJS client. Each message is sent on behalf of the authenticated
+`Principal` from the WebSocket session. The controller places that authentication into
+the `SecurityContext` before saving the message so that regular service-layer security
+checks continue to work.
 
 ### Endpoints
 
