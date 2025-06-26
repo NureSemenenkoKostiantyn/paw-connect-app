@@ -40,6 +40,14 @@ class ChatSocketService {
     }
   }
 
+  /// Replace local unread counters with values provided by the server.
+  void syncUnreadCounts(Iterable<ChatResponse> chats) {
+    for (final chat in chats) {
+      _unreadCounts[chat.id] = chat.unreadCount;
+    }
+    _unreadCountStream.add(Map.from(_unreadCounts));
+  }
+
   void updateChatTitle(int chatId, String title) {
     _chatTitles[chatId] = title;
   }
@@ -123,7 +131,7 @@ onStompError: (frame) {
     if (_subscribedChats.contains(chatId)) return;
     final sub = _client?.subscribe(
       destination: '/topic/chats/$chatId',
-      callback: (frame) {
+      callback: (frame) async {
         final body = frame.body;
         if (body == null) return;
         final res =
@@ -147,9 +155,12 @@ onStompError: (frame) {
           }
         }
         if (_activeChatId == msg.chatId) {
-          _unreadCounts[msg.chatId] = 0;
+          final response = await ChatService.instance
+              .markAsRead(msg.chatId, res.id);
+          final chat =
+              ChatResponse.fromJson(response.data as Map<String, dynamic>);
+          _unreadCounts[msg.chatId] = chat.unreadCount;
           _unreadCountStream.add(Map.from(_unreadCounts));
-          ChatService.instance.markAsRead(msg.chatId, res.id);
         }
       },
     );

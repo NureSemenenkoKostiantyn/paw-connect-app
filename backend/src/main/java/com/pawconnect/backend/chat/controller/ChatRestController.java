@@ -40,8 +40,8 @@ public class ChatRestController {
     }
 
     @PatchMapping("/{chatId}/read/{messageId}")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long chatId, @PathVariable Long messageId) {
-        messageService.markAsRead(chatId, messageId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ChatResponse> markAsRead(@PathVariable Long chatId, @PathVariable Long messageId) {
+        ChatResponse res = messageService.markAsRead(chatId, messageId);
+        return ResponseEntity.ok(res);
     }
 }
