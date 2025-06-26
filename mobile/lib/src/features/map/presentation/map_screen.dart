@@ -46,11 +46,7 @@ class _MapScreenState extends State<MapScreen> {
         final res = await EventService.instance.searchEvents(
           latitude: pos.latitude,
           longitude: pos.longitude,
-<<<<<<< codex/add-event-creation-screen
-          radiusKm: 13.218688,
-=======
           radiusKm: 3.218688,
->>>>>>> main
         );
         _events
           ..clear()
