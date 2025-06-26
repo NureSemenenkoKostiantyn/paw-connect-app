@@ -27,18 +27,12 @@ class App extends StatelessWidget {
     navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const LoginScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const MyHomePage(),
-      ),
+      GoRoute(path: '/home', builder: (context, state) => const MyHomePage()),
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
@@ -46,14 +40,6 @@ class App extends StatelessWidget {
       GoRoute(
         path: '/profile/complete',
         builder: (context, state) => const ProfileCompletionScreen(),
-      ),
-      GoRoute(
-        path: '/dogs/:id',
-        name: 'dog-profile',
-        builder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
-          return DogProfileScreen(dogId: id);
-        },
       ),
       GoRoute(
         path: '/dogs/create',
@@ -68,6 +54,15 @@ class App extends StatelessWidget {
           return DogEditScreen(dogId: id);
         },
       ),
+      GoRoute(
+        path: '/dogs/:id',
+        name: 'dog-profile',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return DogProfileScreen(dogId: id);
+        },
+      ),
+
       GoRoute(
         path: '/public/:id',
         name: 'public-profile',
@@ -89,7 +84,7 @@ class App extends StatelessWidget {
           return EventScreen(eventId: id);
         },
       ),
-      
+
       GoRoute(
         path: '/chats/:id',
         builder: (context, state) {
@@ -106,10 +101,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      theme: AppTheme.light,
-      routerConfig: _router,
-    );
+    return MaterialApp.router(theme: AppTheme.light, routerConfig: _router);
   }
 }
 
@@ -145,22 +137,10 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
