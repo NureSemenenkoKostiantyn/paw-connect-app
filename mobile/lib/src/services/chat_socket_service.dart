@@ -66,7 +66,7 @@ class ChatSocketService {
     final jwt = await HttpClient.instance.getJwt();
     if (jwt == null) return;
     final url = '$apiBaseUrl/ws-chat';
-    final headers = {'Authorization': 'Bearer $jwt'};
+    final headers = {'Cookie': '$jwtCookieName=$jwt'};
     _client = StompClient(
       config: StompConfig.sockJS(
         url: url,
