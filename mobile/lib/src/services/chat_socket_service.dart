@@ -6,6 +6,7 @@ import 'http_client.dart';
 import '../models/chat_message_response.dart';
 import '../models/chat_message.dart';
 import '../models/chat_response.dart';
+import 'chat_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -144,6 +145,11 @@ onStompError: (frame) {
             _unreadCountStream.add(Map.from(_unreadCounts));
             _showNotification(res);
           }
+        }
+        if (_activeChatId == msg.chatId) {
+          _unreadCounts[msg.chatId] = 0;
+          _unreadCountStream.add(Map.from(_unreadCounts));
+          ChatService.instance.markAsRead(msg.chatId, res.id);
         }
       },
     );
