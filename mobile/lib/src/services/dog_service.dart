@@ -15,4 +15,12 @@ class DogService {
   Future<Response<dynamic>> getDog(int id) {
     return _dio.get('/dogs/$id');
   }
+
+  Future<Response<dynamic>> updateDog(int id, Map<String, dynamic> data) {
+    return _dio.put('/dogs/$id', data: data);
+  }
+
+  Future<Response<dynamic>> deleteDog(int id) {
+    return _dio.delete('/dogs/$id');
+  }
 }
