@@ -65,7 +65,7 @@ class ChatSocketService {
     if (_client != null) return;
     final jwt = await HttpClient.instance.getJwt();
     if (jwt == null) return;
-    final url = '${apiBaseUrl.replaceFirst('http', 'ws')}/ws-chat';
+    final url = '$apiBaseUrl/ws-chat';
     final headers = {'Cookie': '$jwtCookieName=$jwt'};
     _client = StompClient(
       config: StompConfig.sockJS(
@@ -73,16 +73,28 @@ class ChatSocketService {
         webSocketConnectHeaders: headers,
         stompConnectHeaders: headers,
         onConnect: _onConnect,
+        onDisconnect: (frame) {
+  print('[STOMP] Disconnected: ${frame.headers}');
+},
+onWebSocketError: (error) {
+  print('[STOMP] WebSocket error: $error');
+},
+onStompError: (frame) {
+  print('[STOMP] STOMP error: ${frame.body}');
+},
       ),
     );
     _client!.activate();
   }
 
   void _onConnect(StompFrame frame) {
+    print('[STOMP] Connected: ${frame.headers}');
     for (final chatId in _chatControllers.keys) {
       _subscribeChat(chatId);
     }
   }
+
+  
 
   void subscribe(int chatId) {
     _chatControllers.putIfAbsent(chatId, () => StreamController.broadcast());
