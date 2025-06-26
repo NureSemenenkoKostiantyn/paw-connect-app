@@ -6,6 +6,7 @@ import '../../../models/chat_response.dart';
 import '../../../services/chat_service.dart';
 import '../../../services/chat_socket_service.dart';
 import '../../../shared/main_app_bar.dart';
+import 'dart:async';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -17,6 +18,7 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   final List<ChatResponse> _chats = [];
   bool _loading = true;
+  StreamSubscription<Map<int, int>>? _unreadSub;
 
   @override
   void initState() {
@@ -27,6 +29,24 @@ class _ChatListScreenState extends State<ChatListScreen> {
     ChatSocketService.instance.messages.listen((msg) {
       if (mounted) setState(() {});
     });
+    _unreadSub = ChatSocketService.instance.unreadCountStream.listen((counts) {
+      if (!mounted) return;
+      setState(() {
+        for (var i = 0; i < _chats.length; i++) {
+          final chat = _chats[i];
+          final count = counts[chat.id];
+          if (count != null && count != chat.unreadCount) {
+            _chats[i] = chat.copyWith(unreadCount: count);
+          }
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _unreadSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadChats() async {
