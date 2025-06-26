@@ -285,7 +285,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemBuilder: (context, index) {
                 if (index == _user!.dogs.length) {
                   return GestureDetector(
-                    onTap: () => context.pushNamed('dog-create'),
+                    onTap: () async {
+                      await context.pushNamed('dog-create');
+                      if (mounted) {
+                        _loadUser();
+                      }
+                    },
                     child: SizedBox(
                       width: 140,
                       child: Card(

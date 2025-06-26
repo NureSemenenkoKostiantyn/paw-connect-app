@@ -182,7 +182,12 @@ class _MapScreenState extends State<MapScreen> {
       body: body,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.pushNamed('event-create'),
+        onPressed: () async {
+          await context.pushNamed('event-create');
+          if (mounted) {
+            _init();
+          }
+        },
         label: const Text('Add Event'),
         icon: const Icon(Icons.add),
       ),
