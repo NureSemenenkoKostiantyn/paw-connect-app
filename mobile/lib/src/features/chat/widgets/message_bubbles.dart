@@ -7,7 +7,13 @@ import '../../../services/chat_socket_service.dart';
 class MessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isMe;
-  const MessageBubble({super.key, required this.message, required this.isMe});
+  final String? username;
+  const MessageBubble({
+    super.key,
+    required this.message,
+    required this.isMe,
+    this.username,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +41,19 @@ class MessageBubble extends StatelessWidget {
             ),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
+              if (!isMe && username != null) ...[
+                Text(
+                  username!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: textColor),
+                ),
+                const SizedBox(height: 2),
+              ],
               Text(message.content, style: TextStyle(color: textColor)),
               const SizedBox(height: 4),
               Row(
@@ -97,7 +114,10 @@ class SentMessageBubble extends MessageBubble {
 }
 
 class ReceivedMessageBubble extends MessageBubble {
-  const ReceivedMessageBubble({super.key, required super.message})
-      : super(isMe: false);
+  const ReceivedMessageBubble({
+    super.key,
+    required super.message,
+    String? username,
+  }) : super(isMe: false, username: username);
 }
 
