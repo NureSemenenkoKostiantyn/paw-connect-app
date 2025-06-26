@@ -78,7 +78,17 @@ class _ChatScreenState extends State<ChatScreen> {
         .messagesForChat(widget.chatId)
         .listen((msg) {
       if (!mounted) return;
-      setState(() => _messages.add(msg));
+      final idx = _messages.indexWhere(
+        (m) =>
+            m.senderId == msg.senderId &&
+            m.timestamp == msg.timestamp &&
+            m.content == msg.content,
+      );
+      if (idx != -1) {
+        setState(() => _messages[idx] = msg);
+      } else {
+        setState(() => _messages.add(msg));
+      }
       _scrollController.scrollTo(
         index: _items.length - 1,
         duration: const Duration(milliseconds: 200),
