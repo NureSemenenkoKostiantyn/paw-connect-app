@@ -107,7 +107,10 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
       });
       if (!mounted) return;
       final event = EventResponse.fromJson(res.data);
-      context.goNamed('event', pathParameters: {'id': event.id.toString()});
+      context.pushReplacementNamed(
+        'event',
+        pathParameters: {'id': event.id.toString()},
+      );
     } on DioException catch (e) {
       final message = e.response?.data['message'] ?? e.message;
       if (mounted) {
