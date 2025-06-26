@@ -28,4 +28,16 @@ class EventService {
   Future<Response<dynamic>> createEvent(Map<String, dynamic> data) {
     return _dio.post('/events', data: data);
   }
+
+  Future<Response<dynamic>> joinEvent(int id, {String status = 'GOING'}) {
+    return _dio.post('/events/$id/join', queryParameters: {'status': status});
+  }
+
+  Future<Response<dynamic>> leaveEvent(int id) {
+    return _dio.delete('/events/$id/leave');
+  }
+
+  Future<Response<dynamic>> deleteEvent(int id) {
+    return _dio.delete('/events/$id');
+  }
 }
