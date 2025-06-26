@@ -12,6 +12,8 @@ import 'features/profile/presentation/public_profile_screen.dart';
 import 'features/event/presentation/event_screen.dart';
 import 'features/event/presentation/event_create_screen.dart';
 import 'features/dog/presentation/dog_profile_screen.dart';
+import 'features/dog/presentation/dog_create_screen.dart';
+import 'features/dog/presentation/dog_edit_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'styles/app_theme.dart';
 import 'services/session_service.dart';
@@ -51,6 +53,19 @@ class App extends StatelessWidget {
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           return DogProfileScreen(dogId: id);
+        },
+      ),
+      GoRoute(
+        path: '/dogs/create',
+        name: 'dog-create',
+        builder: (context, state) => const DogCreateScreen(),
+      ),
+      GoRoute(
+        path: '/dogs/:id/edit',
+        name: 'dog-edit',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return DogEditScreen(dogId: id);
         },
       ),
       GoRoute(

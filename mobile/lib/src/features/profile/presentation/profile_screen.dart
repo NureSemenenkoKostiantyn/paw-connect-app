@@ -12,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/current_user_response.dart';
 import '../../../models/dog_response.dart';
 import '../../../services/user_service.dart';
+import '../../../services/dog_service.dart';
 import '../../../shared/main_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -27,6 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _photoProcessing = false;
   bool _pickingImage = false;
   bool _showFullBio = false;
+  bool _dogActionLoading = false;
 
   @override
   void initState() {
@@ -125,6 +127,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (confirmed == true) {
       await _deletePhoto();
+    }
+  }
+
+  Future<void> _deleteDog(int id) async {
+    setState(() => _dogActionLoading = true);
+    try {
+      await DogService.instance.deleteDog(id);
+      await _loadUser();
+    } finally {
+      if (mounted) setState(() => _dogActionLoading = false);
+    }
+  }
+
+  Future<void> _confirmDeleteDog(int id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Dog'),
+        content: const Text('Are you sure you want to delete this dog?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await _deleteDog(id);
     }
   }
 
@@ -228,7 +263,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildDogs() {
-    if (_user!.dogs.isEmpty) return const SizedBox();
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 8, bottom: 16),
       child: Column(
@@ -246,9 +280,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 180,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _user!.dogs.length,
+              itemCount: _user!.dogs.length + 1,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
+                if (index == _user!.dogs.length) {
+                  return GestureDetector(
+                    onTap: () => context.pushNamed('dog-create'),
+                    child: SizedBox(
+                      width: 140,
+                      child: Card(
+                        child: Center(
+                          child: Icon(
+                            Icons.add,
+                            size: 48,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
                 final DogResponse dog =
                     DogResponse.fromJson(_user!.dogs[index] as Map<String, dynamic>);
                 final age = _calculateAge(dog.birthdate);
@@ -259,57 +311,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: SizedBox(
                     width: 140,
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: dog.photoUrls.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: dog.photoUrls.first,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const Center(child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) => Container(
-                                      color: Colors.black12,
-                                      alignment: Alignment.center,
-                                      child: Icon(
-                                        Icons.pets,
-                                        size: 48,
-                                        color: Theme.of(context).colorScheme.primary,
+                    child: Stack(
+                      children: [
+                        Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: dog.photoUrls.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: dog.photoUrls.first,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            const Center(child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) => Container(
+                                          color: Colors.black12,
+                                          alignment: Alignment.center,
+                                          child: Icon(
+                                            Icons.pets,
+                                            size: 48,
+                                            color: Theme.of(context).colorScheme.primary,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        color: Colors.black12,
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.pets,
+                                          size: 48,
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
                                       ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      age != null ? '${dog.name}, $age' : dog.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                  )
-                                : Container(
-                                    color: Colors.black12,
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.pets,
-                                      size: 48,
-                                      color: Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  age != null ? '${dog.name}, $age' : dog.name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                    if (dog.breed != null)
+                                      Text(
+                                        dog.breed!,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                  ],
                                 ),
-                                if (dog.breed != null)
-                                  Text(
-                                    dog.breed!,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white),
+                            onPressed: _dogActionLoading
+                                ? null
+                                : () => context.pushNamed(
+                                      'dog-edit',
+                                      pathParameters: {'id': dog.id.toString()},
+                                    ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed:
+                                _dogActionLoading ? null : () => _confirmDeleteDog(dog.id),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
