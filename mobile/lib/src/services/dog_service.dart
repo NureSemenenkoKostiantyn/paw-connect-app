@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 
 import 'http_client.dart';
@@ -22,5 +23,19 @@ class DogService {
 
   Future<Response<dynamic>> deleteDog(int id) {
     return _dio.delete('/dogs/$id');
+  }
+
+  Future<Response<dynamic>> uploadPhoto(int id, File file) async {
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      ),
+    });
+    return _dio.post('/dogs/$id/photos', data: formData);
+  }
+
+  Future<Response<dynamic>> deletePhoto(int id, String name) {
+    return _dio.delete('/dogs/$id/photos', queryParameters: {'name': name});
   }
 }
