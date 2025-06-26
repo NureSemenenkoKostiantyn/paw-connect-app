@@ -19,10 +19,13 @@ class ChatSocketService {
   final Map<int, StreamController<ChatMessage>> _chatControllers = {};
   final Map<int, ChatMessage> _latestMessages = {};
   final Map<int, String> _chatTitles = {};
+  final Map<int, int> _unreadCounts = {};
+  final _unreadCountStream = StreamController<Map<int, int>>.broadcast();
   final Set<int> _subscribedChats = {};
   int? _activeChatId;
   int? _currentUserId;
   final _messageStream = StreamController<ChatMessage>.broadcast();
+  Stream<Map<int, int>> get unreadCountStream => _unreadCountStream.stream;
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
@@ -56,6 +59,10 @@ class ChatSocketService {
 
   void setActiveChat(int? chatId) {
     _activeChatId = chatId;
+    if (chatId != null) {
+      _unreadCounts[chatId] = 0;
+      _unreadCountStream.add(Map.from(_unreadCounts));
+    }
   }
 
   void setCurrentUserId(int id) {
@@ -133,6 +140,8 @@ onStompError: (frame) {
           _messageStream.add(msg);
           _chatControllers[chatId]?.add(msg);
           if (_activeChatId != msg.chatId) {
+            _unreadCounts[msg.chatId] = (_unreadCounts[msg.chatId] ?? 0) + 1;
+            _unreadCountStream.add(Map.from(_unreadCounts));
             _showNotification(res);
           }
         }
@@ -179,6 +188,7 @@ onStompError: (frame) {
     _chatControllers.clear();
     _latestMessages.clear();
     _pendingMessages.clear();
+    _unreadCounts.clear();
     _subscribedChats.clear();
   }
 
