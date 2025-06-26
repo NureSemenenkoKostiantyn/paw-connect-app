@@ -41,11 +41,21 @@ public class JwtUtils {
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-        return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+        // Make the cookie available for the entire application so that
+        // websocket handshake requests (e.g. to /ws-chat) also include it.
+        return ResponseCookie.from(jwtCookie, jwt)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .httpOnly(true)
+                .build();
     }
 
     public ResponseCookie getCleanJwtCookie() {
-        return ResponseCookie.from(jwtCookie, null).path("/api").build();
+        // Use the same root path as the authentication cookie to ensure
+        // the client removes it correctly.
+        return ResponseCookie.from(jwtCookie, null)
+                .path("/")
+                .build();
     }
 
     public String getUserNameFromJwtToken(String token) {
