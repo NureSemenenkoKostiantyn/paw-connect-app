@@ -7,6 +7,8 @@ import com.pawconnect.backend.chat.model.Message;
 import com.pawconnect.backend.chat.repository.ChatRepository;
 import com.pawconnect.backend.chat.repository.ChatParticipantRepository;
 import com.pawconnect.backend.chat.repository.MessageRepository;
+import com.pawconnect.backend.chat.dto.ChatResponse;
+import com.pawconnect.backend.chat.service.ChatService;
 import com.pawconnect.backend.common.exception.NotFoundException;
 import com.pawconnect.backend.common.exception.UnauthorizedAccessException;
 import com.pawconnect.backend.user.model.User;
@@ -26,6 +28,7 @@ public class MessageService {
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final ChatParticipantRepository chatParticipantRepository;
+    private final ChatService chatService;
 
     public ChatMessageResponse saveMessage(ChatMessageRequest request) {
         Chat chat = chatRepository.findById(request.getChatId())
@@ -89,7 +92,7 @@ public class MessageService {
                 .toList();
     }
 
-    public void markAsRead(Long chatId, Long messageId) {
+    public ChatResponse markAsRead(Long chatId, Long messageId) {
         User user = userService.getCurrentUserEntity();
         if (!chatRepository.existsByIdAndParticipantsUserId(chatId, user.getId())) {
             throw new UnauthorizedAccessException("You are not a participant of this chat");
@@ -103,5 +106,6 @@ public class MessageService {
         }
 
         chatParticipantRepository.updateLastReadMessage(chatId, user.getId(), message);
+        return chatService.getChatForCurrentUserDto(chatId);
     }
 }

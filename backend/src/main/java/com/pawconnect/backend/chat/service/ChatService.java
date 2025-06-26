@@ -99,6 +99,16 @@ public class ChatService {
         return getChatEntity(chatId);
     }
 
+    /**
+     * Retrieve chat details for the currently authenticated user including
+     * latest message metadata and unread count.
+     */
+    public ChatResponse getChatForCurrentUserDto(Long chatId) {
+        Long userId = userService.getCurrentUserEntity().getId();
+        Chat chat = getChatForUser(chatId, userId);
+        return buildChatResponse(chat, userId);
+    }
+
     public List<ChatResponse> getCurrentUserChats() {
         Long userId = userService.getCurrentUserEntity().getId();
         return getChatsByUserId(userId);

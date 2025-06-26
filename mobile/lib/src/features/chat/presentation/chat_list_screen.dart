@@ -58,6 +58,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ..addAll((res.data as List<dynamic>)
             .map((e) => ChatResponse.fromJson(e as Map<String, dynamic>)));
       ChatSocketService.instance.updateChatTitles(_chats);
+      ChatSocketService.instance.syncUnreadCounts(_chats);
       for (final chat in _chats) {
         ChatSocketService.instance.subscribe(chat.id);
       }
