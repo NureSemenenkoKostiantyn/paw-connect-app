@@ -26,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ItemScrollController _scrollController = ItemScrollController();
   final ItemPositionsListener _positions = ItemPositionsListener.create();
   final ValueNotifier<String?> _floatingDate = ValueNotifier(null);
+  StreamSubscription<ChatMessage>? _chatSubscription;
 
   int _page = 0;
   bool _loading = false;
@@ -71,17 +72,24 @@ class _ChatScreenState extends State<ChatScreen> {
     ChatSocketService.instance.connect();
     ChatSocketService.instance.subscribe(widget.chatId);
     ChatSocketService.instance.setActiveChat(widget.chatId);
-    ChatSocketService.instance.messagesForChat(widget.chatId).listen((msg) {
+    _chatSubscription = ChatSocketService.instance
+        .messagesForChat(widget.chatId)
+        .listen((msg) {
+      if (!mounted) return;
       setState(() => _messages.add(msg));
       _scrollController.scrollTo(
-          index: _items.length - 1,
-          duration: const Duration(milliseconds: 200));
+        index: _items.length - 1,
+        duration: const Duration(milliseconds: 200),
+      );
     });
   }
 
   @override
   void dispose() {
     ChatSocketService.instance.setActiveChat(null);
+    _chatSubscription?.cancel();
+    _positions.itemPositions.removeListener(_updateFloatingDate);
+    _floatingDate.dispose();
     _controller.dispose();
     super.dispose();
   }
