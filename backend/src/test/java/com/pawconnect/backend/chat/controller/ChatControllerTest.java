@@ -10,7 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+
 import static org.mockito.Mockito.*;
+
+import org.springframework.security.core.Authentication;
 
 @ExtendWith(MockitoExtension.class)
 class ChatControllerTest {
@@ -28,7 +31,8 @@ class ChatControllerTest {
         resp.setChatId(5L);
         when(messageService.saveMessage(req)).thenReturn(resp);
 
-        chatController.sendMessage(req);
+        Authentication authentication = mock(Authentication.class);
+        chatController.sendMessage(authentication, req);
 
         verify(messagingTemplate).convertAndSend("/topic/chats/5", resp);
     }
