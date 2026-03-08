@@ -87,3 +87,5 @@ checks continue to work.
 - `participantIds` – user IDs participating in the chat.
 - `lastMessage` – details of the most recent message (or `null`).
 - `unreadCount` – number of unread messages for the requesting user.
+
+  
