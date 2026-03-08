@@ -47,3 +47,4 @@ If any required information is missing you will be redirected to the
 multi‑step profile completion flow.  This wizard collects profile fields,
 preference settings and at least one dog entry before navigating to the home
 screen.
+
